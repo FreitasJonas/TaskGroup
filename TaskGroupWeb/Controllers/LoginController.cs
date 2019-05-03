@@ -42,16 +42,21 @@ namespace TaskGroupWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                user.senha = _protector.Protect(user.senha);
+                user.password = _protector.Protect(user.password);
 
                 var model = _mapper.Map<User>(user);
-                var LoginStatus = _db.userAcesso.ValidateUser(model); 
+
+                var LoginStatus = false;
+                var _user = _db.userAcesso.ValidateUser(model, out LoginStatus); 
 
                 if (LoginStatus)
                 {
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Name, user.login)
+                        new Claim(ClaimTypes.Name, user.name),
+                        new Claim("email", user.login),
+                        new Claim("contact", user.contact),
+                        new Claim("date.created", user.dateCreated.ToString()),
                     };
 
                     ClaimsIdentity userIdentity = new ClaimsIdentity(claims, _tipoAutenticacao);
@@ -71,6 +76,12 @@ namespace TaskGroupWeb.Controllers
             else { 
                 return View();
             }
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index");
         }
     }
 }
