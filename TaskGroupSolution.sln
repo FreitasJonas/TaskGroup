@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskGroupWeb", "TaskGroupWeb\TaskGroupWeb.csproj", "{1611EC50-A170-41DE-8ACC-551DADF4A959}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Objetos", "Objetos\Objetos.csproj", "{EC973FCC-1966-45D9-A3B9-438F799D1337}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acesso", "Acesso\Acesso.csproj", "{30F2C66E-1336-417D-8EE0-6B480F608456}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1611EC50-A170-41DE-8ACC-551DADF4A959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1611EC50-A170-41DE-8ACC-551DADF4A959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1611EC50-A170-41DE-8ACC-551DADF4A959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1611EC50-A170-41DE-8ACC-551DADF4A959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC973FCC-1966-45D9-A3B9-438F799D1337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC973FCC-1966-45D9-A3B9-438F799D1337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC973FCC-1966-45D9-A3B9-438F799D1337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC973FCC-1966-45D9-A3B9-438F799D1337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30F2C66E-1336-417D-8EE0-6B480F608456}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30F2C66E-1336-417D-8EE0-6B480F608456}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30F2C66E-1336-417D-8EE0-6B480F608456}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30F2C66E-1336-417D-8EE0-6B480F608456}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D5664B94-2949-4BB5-B4F4-66B9FA821F2A}
+	EndGlobalSection
+EndGlobal
