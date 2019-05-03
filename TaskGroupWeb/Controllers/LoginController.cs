@@ -1,8 +1,10 @@
 ﻿using Acesso;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Objetos;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,11 +18,17 @@ namespace TaskGroupWeb.Controllers
         public IDataProtector _protector { get; set; }
         public IConfiguration _configuration { get; set; }
 
-        public LoginController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration)
+        private IMapper _mapper;
+        private string _tipoAutenticacao;
+
+        public LoginController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration, IMapper mapper)
         {
             this._db = _db;
             this._protector = protectionProvider.CreateProtector(configuration.GetSection("ChaveCriptografia").Value);
             this._configuration = configuration;
+            this._mapper = mapper;
+
+            _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
         public IActionResult Index()
@@ -30,11 +38,14 @@ namespace TaskGroupWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UserLogin([Bind] LoginModel user)
+        public async Task<IActionResult> UserLogin([Bind] UserModel user)
         {
             if (ModelState.IsValid)
             {
-                var LoginStatus = _db.userAcesso.ValidateUser(user.login, user.senha); 
+                user.senha = _protector.Protect(user.senha);
+
+                var model = _mapper.Map<User>(user);
+                var LoginStatus = _db.userAcesso.ValidateUser(model); 
 
                 if (LoginStatus)
                 {
@@ -43,17 +54,17 @@ namespace TaskGroupWeb.Controllers
                         new Claim(ClaimTypes.Name, user.login)
                     };
 
-                    ClaimsIdentity userIdentity = new ClaimsIdentity(claims, "login");
+                    ClaimsIdentity userIdentity = new ClaimsIdentity(claims, _tipoAutenticacao);
                     ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
 
                     await HttpContext.SignInAsync(principal);
 
                     TempData["Message"] = "Success!";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    TempData["Message"] = "Login Failed.Please enter correct credentials";
+                    TempData["Message"] = "Usuário ou senha incorretos!";
                     return View();
                 }
             }

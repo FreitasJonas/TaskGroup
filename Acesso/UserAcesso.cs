@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Objetos;
+using System;
 
 namespace Acesso
 {
@@ -31,7 +30,7 @@ namespace Acesso
             throw new NotImplementedException();
         }
 
-        public bool ValidateUser(string login, string senha)
+        public bool ValidateUser(User model)
         {
             return true;
         }
