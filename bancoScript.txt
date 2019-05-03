@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `message` text NOT NULL,
   `dt_create` datetime NOT NULL,
   PRIMARY KEY (`id_message`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.messages: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.messages: 0 rows
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 
@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS `param` (
   `nr_status` int(11) DEFAULT NULL,
   `nm_desc` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`nm_nome`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.param: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.param: 0 rows
 /*!40000 ALTER TABLE `param` DISABLE KEYS */;
 /*!40000 ALTER TABLE `param` ENABLE KEYS */;
 
@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS `task` (
   `dt_create` datetime NOT NULL,
   `dt_finaly` datetime DEFAULT NULL,
   PRIMARY KEY (`id_task`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.task: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.task: 0 rows
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 
@@ -63,13 +63,18 @@ CREATE TABLE IF NOT EXISTS `task` (
 CREATE TABLE IF NOT EXISTS `users` (
   `id_user` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(100) NOT NULL,
-  `senha` varchar(50) NOT NULL,
+  `senha` varchar(200) NOT NULL,
+  `contact` varchar(50) NOT NULL,
   `dt_create` datetime NOT NULL,
-  PRIMARY KEY (`id_user`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id_user`),
+  KEY `login` (`login`),
+  KEY `senha` (`senha`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.users: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.users: 1 rows
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` (`id_user`, `login`, `senha`, `contact`, `dt_create`) VALUES
+	(1, 'jonascontato15@gmail.com', 'CfDJ8CErOAQLS_RHk8c09yL-XT2uc6BQOioIGQoNBYgZdUYg4sYROt2FQb79jqxVUUDcqGu7JjM2uYgNiY1WgGsi7vrK5lojxfYAE4kN_w4QG2MUSdF8K_oaZJsjYXapSU0nEg', '11955572997', '2019-05-03 09:35:35');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
