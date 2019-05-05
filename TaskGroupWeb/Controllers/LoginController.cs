@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Objetos;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TaskGroupWeb.Helpers;
 using TaskGroupWeb.Models;
 
 namespace TaskGroupWeb.Controllers
@@ -38,48 +40,58 @@ namespace TaskGroupWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UserLogin([Bind] UserModel user)
+        public async Task<IActionResult> UserLogin(LoginModel _login)
         {
-            if (ModelState.IsValid)
+            try
             {
-                user.password = _protector.Protect(user.password);
-
-                var model = _mapper.Map<User>(user);
-
-                var LoginStatus = false;
-                var _user = _db.userAcesso.ValidateUser(model, out LoginStatus); 
-
-                if (LoginStatus)
+                if (ModelState.IsValid)
                 {
-                    var claims = new List<Claim>
+                    _login.password = Crypter.GetMD5(_login.password);
+
+                    var LoginStatus = false;
+                    var _user = _db.DbUser.ValidateUser(_login.login, _login.password, out LoginStatus);
+
+                    if (LoginStatus)
                     {
-                        new Claim(ClaimTypes.Name, user.name),
-                        new Claim("email", user.login),
-                        new Claim("contact", user.contact),
-                        new Claim("date.created", user.dateCreated.ToString()),
+                        var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, _user.name),
+                        new Claim("email", _user.login),
+                        new Claim("contact", _user.contact),
+                        new Claim("date.created", _user.dateCreated.ToString()),
                     };
 
-                    ClaimsIdentity userIdentity = new ClaimsIdentity(claims, _tipoAutenticacao);
-                    ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
+                        ClaimsIdentity userIdentity = new ClaimsIdentity(claims, _tipoAutenticacao);
+                        ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
 
-                    await HttpContext.SignInAsync(principal);
+                        await HttpContext.SignInAsync(principal);
 
-                    TempData["Message"] = "Success!";
-                    return RedirectToAction("Index", "Home");
+                        TempData["Message"] = "Success!";
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Usuário ou senha incorretos!";
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {
-                    TempData["Message"] = "Usuário ou senha incorretos!";
-                    return View();
+                    TempData["Message"] = "Por favor preencha todos os campos!";
+                    return RedirectToAction("Index");
                 }
             }
-            else { 
-                return View();
+            catch (Exception e)
+            {
+                Logger.SaveLog(e, _configuration);
+                TempData["Message"] = "Ocorreu um erro inesperado!";
+                return RedirectToAction("Index");
             }
         }
 
         public async Task<IActionResult> Logout()
         {
+            TempData.Clear();
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index");
         }

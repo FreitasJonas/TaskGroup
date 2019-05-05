@@ -1,12 +1,16 @@
-﻿namespace Acesso
+﻿using Objetos;
+
+namespace Acesso
 {
     public class DbContext
     {
-        public UserAcesso userAcesso { get; set; }
+        public UserAccess<User> DbUser { get; set; }
+        public ProjectAccess<Project> DbProject { get; set; }
 
         public DbContext(string strConnection)
         {
-            userAcesso = new UserAcesso(strConnection);
+            DbUser = new UserAccess<User>(strConnection);
+            DbProject = new ProjectAccess<Project>(strConnection);
         }
     }
 }

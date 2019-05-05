@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using Objetos;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TaskGroupWeb.Models;
 
 namespace TaskGroupWeb.Mappers
@@ -15,6 +12,15 @@ namespace TaskGroupWeb.Mappers
             // Add as many of these lines as you need to map your objects
             CreateMap<User, UserModel>();
             CreateMap<UserModel, User>();
+
+            CreateMap<List<User>, List<UserModel>>();
+            CreateMap<List<UserModel>, List<User>>();
+
+            CreateMap<Project, ProjectModel>();
+            CreateMap<ProjectModel, Project>();
+
+            CreateMap<List<Project>, List<ProjectModel>>();
+            CreateMap<List<ProjectModel>, List<Project>>();
         }
     }
 }

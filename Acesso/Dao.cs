@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Acesso
 {
-    public abstract class DaoMySql : IDao
+    public abstract class DaoMySql
     {
         public MySqlCommand Cmd;
         public MySqlConnection Conn;
@@ -30,15 +30,8 @@ namespace Acesso
             if(Conn.State == ConnectionState.Open)
             {
                 Conn.Close();
+                Cmd.Parameters.Clear();
             }
         }
-
-        public abstract void Delete(object model);
-
-        public abstract void Insert(object model);
-
-        public abstract object Select(object model);
-
-        public abstract void Update(object model);
     }
 }

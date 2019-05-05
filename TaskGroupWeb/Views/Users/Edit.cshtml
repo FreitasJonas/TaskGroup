@@ -1,0 +1,87 @@
+﻿@model TaskGroupWeb.Models.UserModel
+
+@{
+    ViewData["Title"] = "Editar usuário";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (TempData["Error"] != null)
+{
+    <p class="alert alert-danger">@TempData["Error"]</p>
+}
+
+@if (TempData["Sucess"] != null)
+{
+    <p class="alert alert-success">@TempData["Sucess"]</p>
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="userId" class="control-label"></label>
+                <input asp-for="userId" class="form-control" hidden />
+                <span asp-validation-for="userId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="login" class="control-label"></label>
+                <input asp-for="login" class="form-control" />
+                <span asp-validation-for="login" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="password" class="control-label"></label>
+                <input asp-for="password" type="password" value="@Model.password" class="form-control" />
+                <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="confirmPassword" class="control-label"></label>
+                <input asp-for="confirmPassword" type="password" value="@Model.password" class="form-control" />
+                <span asp-validation-for="confirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <span asp-validation-for="name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="contact" class="control-label"></label>
+                <input asp-for="contact" class="form-control" />
+                <span asp-validation-for="contact" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="dateCreated" class="control-label"></label>
+                <input asp-for="dateCreated" class="form-control" disabled />
+                <span asp-validation-for="dateCreated" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Salvar</span>
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary btn-icon-split">
+        <span class="icon text-white-50">
+            <i class="fas fa-backward"></i>
+        </span>
+        <span class="text">Voltar a lista</span>
+    </a>
+</div>
+
+@section scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+}
+

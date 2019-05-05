@@ -1,4 +1,4 @@
--- --------------------------------------------------------
+﻿-- --------------------------------------------------------
 -- Servidor:                     127.0.0.1
 -- Versão do servidor:           10.2.9-MariaDB - mariadb.org binary distribution
 -- OS do Servidor:               Win64
@@ -13,10 +13,12 @@
 
 
 -- Copiando estrutura do banco de dados para taskdb
+DROP DATABASE IF EXISTS `taskdb`;
 CREATE DATABASE IF NOT EXISTS `taskdb` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `taskdb`;
 
 -- Copiando estrutura para tabela taskdb.messages
+DROP TABLE IF EXISTS `messages`;
 CREATE TABLE IF NOT EXISTS `messages` (
   `id_message` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.param
+DROP TABLE IF EXISTS `param`;
 CREATE TABLE IF NOT EXISTS `param` (
   `nm_nome` varchar(50) NOT NULL,
   `nm_valor` varchar(50) DEFAULT NULL,
@@ -42,9 +45,26 @@ CREATE TABLE IF NOT EXISTS `param` (
 /*!40000 ALTER TABLE `param` DISABLE KEYS */;
 /*!40000 ALTER TABLE `param` ENABLE KEYS */;
 
--- Copiando estrutura para tabela taskdb.task
-CREATE TABLE IF NOT EXISTS `task` (
+-- Copiando estrutura para tabela taskdb.projects
+DROP TABLE IF EXISTS `projects`;
+CREATE TABLE IF NOT EXISTS `projects` (
+  `id_project` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `nm_desc` text NOT NULL,
+  `framework` varchar(50) NOT NULL,
+  `dt_create` datetime NOT NULL,
+  PRIMARY KEY (`id_project`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Copiando dados para a tabela taskdb.projects: ~0 rows (aproximadamente)
+/*!40000 ALTER TABLE `projects` DISABLE KEYS */;
+/*!40000 ALTER TABLE `projects` ENABLE KEYS */;
+
+-- Copiando estrutura para tabela taskdb.tasks
+DROP TABLE IF EXISTS `tasks`;
+CREATE TABLE IF NOT EXISTS `tasks` (
   `id_task` int(11) NOT NULL,
+  `id_project` int(11) NOT NULL,
   `cod_task` varchar(50) NOT NULL,
   `user_own` int(11) NOT NULL,
   `subject` varchar(50) NOT NULL,
@@ -55,27 +75,29 @@ CREATE TABLE IF NOT EXISTS `task` (
   PRIMARY KEY (`id_task`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.task: 0 rows
-/*!40000 ALTER TABLE `task` DISABLE KEYS */;
-/*!40000 ALTER TABLE `task` ENABLE KEYS */;
+-- Copiando dados para a tabela taskdb.tasks: 0 rows
+/*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.users
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id_user` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(100) NOT NULL,
-  `password` varchar(200) NOT NULL,
+  `pass` varchar(200) NOT NULL,
   `name` varchar(200) NOT NULL,
   `contact` varchar(50) NOT NULL,
   `dt_create` datetime NOT NULL,
   PRIMARY KEY (`id_user`),
-  KEY `login` (`login`),
-  KEY `senha` (`password`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `login` (`login`),
+  KEY `senha` (`pass`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- Copiando dados para a tabela taskdb.users: 1 rows
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` (`id_user`, `login`, `password`, `name`, `contact`, `dt_create`) VALUES
-	(1, 'jonascontato15@gmail.com', 'CfDJ8CErOAQLS_RHk8c09yL-XT2uc6BQOioIGQoNBYgZdUYg4sYROt2FQb79jqxVUUDcqGu7JjM2uYgNiY1WgGsi7vrK5lojxfYAE4kN_w4QG2MUSdF8K_oaZJsjYXapSU0nEg', 'Jonas Freitas', '11955572997', '2019-05-03 09:35:35');
+INSERT INTO `users` (`id_user`, `login`, `pass`, `name`, `contact`, `dt_create`) VALUES
+	(1, 'jonascontato15@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Azevedo', '11955572997', '2019-05-03 09:35:35'),
+	(5, 'jonascontato155@gmail.com', '4297F44B13955235245B2497399D7A93', 'Jonas Teste', '11955572997', '2019-05-05 19:44:27');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

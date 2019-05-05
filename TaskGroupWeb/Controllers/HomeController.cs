@@ -1,47 +1,45 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Acesso;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using TaskGroupWeb.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace TaskGroupWeb.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        public HomeController()
-        {
+        public DbContext _db { get; set; }
+        public IDataProtector _protector { get; set; }
+        public IConfiguration _configuration { get; set; }
 
+        private IMapper _mapper;
+        private string _tipoAutenticacao;
+
+        public HomeController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration, IMapper mapper)
+        {
+            this._db = _db;
+            this._protector = protectionProvider.CreateProtector(configuration.GetSection("ChaveCriptografia").Value);
+            this._configuration = configuration;
+            this._mapper = mapper;
+
+            _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
         public IActionResult Index()
-        {
-            
+        {            
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult Users()
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
+            return RedirectToAction("Index", "Users");
         }
 
-        public IActionResult Contact()
+        public IActionResult Projects()
         {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return RedirectToAction("Index", "Projects");
         }
     }
 }
