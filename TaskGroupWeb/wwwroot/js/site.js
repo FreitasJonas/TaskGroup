@@ -1,4 +1,36 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿const SUCESSO = 0;
+const FALHA = 1;
 
-// Write your JavaScript code.
+function submitAssync(url, data, sucesso, falha) {
+
+    $.ajax({
+        method: "POST",
+        url: url,
+        data: data,
+        success: function (response) {
+            if (response.status == SUCESSO) {
+                sucesso(response);
+            }
+            else {
+                falha(response);
+            }
+        }
+    })
+}
+
+function submitAssyncGet(url, data, sucesso, falha) {
+
+    $.ajax({
+        method: "GET",
+        url: url,
+        data: data,
+        success: function (response) {
+            if (response.status == SUCESSO) {
+                sucesso(response);
+            }
+            else if (response.status == FALHA) {
+                falha(response);
+            }
+        }
+    })
+}

@@ -48,7 +48,7 @@ namespace Acesso
             }
         }
 
-        public List<T> List()
+        public List<T> List(object model = null)
         {
             try
             {

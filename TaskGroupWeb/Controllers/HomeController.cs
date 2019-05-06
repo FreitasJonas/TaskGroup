@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TaskGroupWeb.Helpers;
+using TaskGroupWeb.Models;
 
 namespace TaskGroupWeb.Controllers
 {
@@ -15,7 +20,7 @@ namespace TaskGroupWeb.Controllers
         public IConfiguration _configuration { get; set; }
 
         private IMapper _mapper;
-        private string _tipoAutenticacao;
+        private readonly string _tipoAutenticacao;
 
         public HomeController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration, IMapper mapper)
         {
@@ -28,8 +33,24 @@ namespace TaskGroupWeb.Controllers
         }
 
         public IActionResult Index()
-        {            
-            return View();
+        {
+            try
+            {
+                var projects = _db.DbProject.List();
+                var projectsModel = _mapper.Map<IList<ProjectModel>>(projects);
+                var indexModel = new IndexModel()
+                {
+                    projectModels = projectsModel.ToList()
+                };
+
+                return View(indexModel);
+            }
+            catch (Exception e)
+            {
+                Logger.SaveLog(e, _configuration);
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar os projetos!";
+                return View();
+            }            
         }
 
         public IActionResult Users()

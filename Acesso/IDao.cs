@@ -11,6 +11,6 @@ namespace Acesso
         T Select(object model);
         void Update(T model);
         void Delete(object model);
-        List<T> List();
+        List<T> List(object model = null);
     }
 }

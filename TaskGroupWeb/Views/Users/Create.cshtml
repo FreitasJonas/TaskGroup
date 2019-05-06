@@ -5,15 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@if (TempData["Error"] != null)
-{
-    <p class="alert alert-danger">@TempData["Error"]</p>
-}
-
-@if (TempData["Sucess"] != null)
-{
-    <p class="alert alert-success">@TempData["Sucess"]</p>
-}
+<partial name="~/Views/Shared/_MessageResult.cshtml" />
 
 <h2>Registrar novo usuário</h2>
 

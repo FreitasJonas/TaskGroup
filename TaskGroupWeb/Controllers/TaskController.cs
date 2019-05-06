@@ -1,28 +1,27 @@
 ﻿using Acesso;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Objetos;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TaskGroupWeb.Helpers;
 using TaskGroupWeb.Models;
 
 namespace TaskGroupWeb.Controllers
 {
-    [Authorize]
-    public class ProjectsController : Controller
+    public class TaskController : Controller
     {
         public DbContext _db { get; set; }
         public IDataProtector _protector { get; set; }
         public IConfiguration _configuration { get; set; }
 
         private IMapper _mapper;
-        private string _tipoAutenticacao;
+        private readonly string _tipoAutenticacao;
 
-        public ProjectsController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration, IMapper mapper)
+        public TaskController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration, IMapper mapper)
         {
             this._db = _db;
             this._protector = protectionProvider.CreateProtector(configuration.GetSection("ChaveCriptografia").Value);
@@ -36,14 +35,22 @@ namespace TaskGroupWeb.Controllers
         {
             try
             {
-                var projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
-                return View(projects);
+                var projects = _db.DbProject.List();
+                var _projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
+
+                foreach (var project in _projects)
+                {
+                    var _tasks = _db.DbTask.ListFromProject(project.projectId);
+                    project.tasks = _mapper.Map<IList<TaskModel>>(_tasks).ToList();
+                }
+
+                return View(_projects);
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projetos!";
-                return RedirectToAction("Index", "Home");
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar os projetos!";
+                return View();
             }
         }
 
@@ -62,105 +69,97 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
-        public IActionResult Edit(int projectId)
+        public IActionResult Edit(int taskId)
         {
             try
             {
-                var project = _db.DbProject.Select(projectId);
-                var projectModel = _mapper.Map<ProjectModel>(project);
+                var task = _db.DbTask.Select(taskId);
+                var taskModel = _mapper.Map<TaskModel>(task);
 
-                ArrangeDropDownToEdit(projectModel);
-                return View(projectModel);
+                ArrangeDropDownToEdit(taskModel);
+                return View(taskModel);
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projeto!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar tarefa!";
                 return RedirectToAction("Index");
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ProjectModel projectModel)
+        public IActionResult Create(TaskModel taskModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var project = _mapper.Map<Project>(projectModel);
-                    _db.DbProject.Insert(project);
+                    var task = _mapper.Map<Task>(taskModel);
+                    task.taskId = _db.DbTask.Insert(task);
+                    task.taskCode = TaskCodeGenerator.Generate(task.taskId);
 
-                    TempData[OperationResult.Success.ToString()] = "Projeto salvo com sucesso!";
+                    _db.DbTask.Update(task);
+
+                    TempData[OperationResult.Success.ToString()] = "Tarefa salva com sucesso!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
                     ArrangeDropDownToCreate();
                     TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
-                    return View(projectModel);
+                    return View(taskModel);
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao salvar projeto!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao salvar tarefa!";
                 return RedirectToAction("Index");
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(ProjectModel projectModel)
+        public IActionResult Edit(TaskModel taskModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var project = _mapper.Map<Project>(projectModel);
-                    _db.DbProject.Update(project);
+                    var task = _mapper.Map<Task>(taskModel);
+                    _db.DbTask.Update(task);
 
-                    TempData[OperationResult.Success.ToString()] = "Projeto salvo com sucesso!";
+                    TempData[OperationResult.Success.ToString()] = "Tarefa salva com sucesso!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    ArrangeDropDownToEdit(projectModel);
+                    ArrangeDropDownToEdit(taskModel);
                     TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
-                    return View(projectModel);
+                    return View(taskModel);
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projeto!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar tarefa!";
                 return RedirectToAction("Index");
             }
 
         }
 
-        public IActionResult GetProjects()
-        {
-            try
-            {
-                var _projects = _db.DbProject.List();
-                return Json(new { status = OperationResult.Success, projects = _projects });
-            }
-            catch (Exception e)
-            {
-                Logger.SaveLog(e, _configuration);
-                return Json(new { status = OperationResult.Error, message = "Falha ao carregar projetos" });
-            }
-        }
-
         private void ArrangeDropDownToCreate()
         {
-            ViewBag.FrameWorks = HtmlDropDownHelper.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value");
+            ViewBag.Status = HtmlDropDownHelper.GetDropDownFromEnum<TaskStatus>((int)TaskStatus.Aberto);
+            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name");
+            ViewBag.Projects = HtmlDropDownHelper.GetDropDownList(_db.DbProject.List(), "projectId", "name");
         }
 
-        private void ArrangeDropDownToEdit(ProjectModel project)
+        private void ArrangeDropDownToEdit(TaskModel task)
         {
-            ViewBag.FrameWorks = HtmlDropDownHelper.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value", project.framework);
+            ViewBag.Status = HtmlDropDownHelper.GetDropDownFromEnum<TaskStatus>(task.status);
+            //ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "name", "userId");
         }
     }
 }

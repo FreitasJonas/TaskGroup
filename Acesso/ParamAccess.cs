@@ -20,9 +20,41 @@ namespace Acesso
             throw new NotImplementedException();
         }
 
-        public List<T> List()
+        public List<T> List(object param)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var listParam = new List<Param>();
+
+                OpenDb();
+
+                Cmd.CommandText = "select * from param where nm_nome like @nm_nome and nr_status = 0";
+                Cmd.Parameters.AddWithValue("nm_nome", "%" + param.ToString() + "%");
+
+                Reader = Cmd.ExecuteReader();
+
+                while (Reader.Read())
+                {
+                    var _param = new Param();
+
+                    _param.name = Reader.GetString("nm_nome");
+                    _param.value = Reader.GetString("nm_valor");
+                    _param.status = Reader.GetInt32("nr_status");
+                    _param.description = Reader.GetString("nm_desc"); 
+
+                    listParam.Add(_param);
+                }
+
+                return listParam as List<T>;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                CloseDb();
+            }            
         }
 
         public T Select(object model)

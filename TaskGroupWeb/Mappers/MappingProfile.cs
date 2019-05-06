@@ -21,6 +21,12 @@ namespace TaskGroupWeb.Mappers
 
             CreateMap<List<Project>, List<ProjectModel>>();
             CreateMap<List<ProjectModel>, List<Project>>();
+
+            CreateMap<Task, TaskModel>();
+            CreateMap<TaskModel, Task>();
+
+            CreateMap<List<Task>, List<TaskModel>>();
+            CreateMap<List<TaskModel>, List<Task>>();
         }
     }
 }

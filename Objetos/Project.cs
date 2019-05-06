@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Objetos
 {
@@ -9,5 +10,12 @@ namespace Objetos
         public string description { get; set; }
         public string framework { get; set; }
         public DateTime dateCreated { get; set; }
+
+        public List<Task> tasks { get; set; }
+
+        public Project()
+        {
+            tasks = new List<Task>();
+        }
     }
 }

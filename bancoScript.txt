@@ -37,12 +37,15 @@ CREATE TABLE IF NOT EXISTS `param` (
   `nm_nome` varchar(50) NOT NULL,
   `nm_valor` varchar(50) DEFAULT NULL,
   `nr_status` int(11) DEFAULT NULL,
-  `nm_desc` varchar(50) DEFAULT NULL,
+  `nm_desc` varchar(50) NOT NULL DEFAULT '-',
   PRIMARY KEY (`nm_nome`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.param: 0 rows
+-- Copiando dados para a tabela taskdb.param: 2 rows
 /*!40000 ALTER TABLE `param` DISABLE KEYS */;
+INSERT INTO `param` (`nm_nome`, `nm_valor`, `nr_status`, `nm_desc`) VALUES
+	('project_frameworks_01', 'Asp.Net Core C#', 0, '-'),
+	('project_frameworks_02', 'Unity C#', 0, '-');
 /*!40000 ALTER TABLE `param` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.projects
@@ -54,37 +57,35 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `framework` varchar(50) NOT NULL,
   `dt_create` datetime NOT NULL,
   PRIMARY KEY (`id_project`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.projects: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.projects: ~1 rows (aproximadamente)
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
 INSERT INTO `projects` (`id_project`, `name`, `nm_desc`, `framework`, `dt_create`) VALUES
-	(1, 'TaskGroup 656', 'Tarefas 345345', 'Asp.Net Core C#', '2019-05-05 21:34:16'),
-	(2, 'Tasker Group', 'Teste', 'Asp.Net Core C#', '2019-05-05 21:49:34'),
-	(3, 'Tasker Group', 'Teste', 'Asp.Net Core C#', '2019-05-05 21:50:48'),
-	(4, 'Tasker Group', 'Teste', 'Asp.Net Core C#', '2019-05-05 21:52:18'),
-	(5, 'Tasker Group', 'Teste', 'Asp.Net Core C#', '2019-05-05 22:02:57'),
-	(6, 'Tasker Group 555', 'Teste', 'Asp.Net Core C#', '2019-05-05 22:03:11'),
-	(7, 'Tasker Group', 'Teste', 'Asp.Net Core C#', '2019-05-05 22:07:02');
+	(9, 'TaskGroup', 'Teste', 'Asp.Net Core C#', '2019-05-06 12:56:59');
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.tasks
 DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE IF NOT EXISTS `tasks` (
-  `id_task` int(11) NOT NULL,
+  `id_task` int(11) NOT NULL AUTO_INCREMENT,
   `id_project` int(11) NOT NULL,
-  `cod_task` varchar(50) NOT NULL,
+  `cod_task` varchar(50) DEFAULT NULL,
   `user_own` int(11) NOT NULL,
   `subject` varchar(50) NOT NULL,
   `description` varchar(100) NOT NULL,
   `status` int(11) NOT NULL,
   `dt_create` datetime NOT NULL,
+  `dt_sla` datetime DEFAULT NULL,
   `dt_finaly` datetime DEFAULT NULL,
   PRIMARY KEY (`id_task`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.tasks: 0 rows
+-- Copiando dados para a tabela taskdb.tasks: 1 rows
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
+INSERT INTO `tasks` (`id_task`, `id_project`, `cod_task`, `user_own`, `subject`, `description`, `status`, `dt_create`, `dt_sla`, `dt_finaly`) VALUES
+	(1, 1, 'ABC', 1, 'Teste', 'teste', 1, '2019-05-06 16:20:15', '2019-05-06 16:20:18', '2019-05-06 16:20:20'),
+	(2, 9, '2019-5-00002', 1, 'teste', 'Teste', 2, '0001-01-01 00:00:00', '1996-10-12 01:01:00', '0001-01-01 00:00:00');
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.users
@@ -101,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `senha` (`pass`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.users: 2 rows
+-- Copiando dados para a tabela taskdb.users: 3 rows
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id_user`, `login`, `pass`, `name`, `contact`, `dt_create`) VALUES
 	(1, 'jonascontato15@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Azevedo', '11955572997', '2019-05-03 09:35:35'),

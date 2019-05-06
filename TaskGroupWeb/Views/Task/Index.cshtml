@@ -1,0 +1,138 @@
+﻿@model IEnumerable<TaskGroupWeb.Models.ProjectModel>
+
+@{
+    ViewData["Title"] = "Tarefas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    <link href="~/lib/DataTables/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="~/lib/DataTables/datatables.css" rel="stylesheet" />
+    <link href="~/lib/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/css/datatable/custom.css" rel="stylesheet" />
+}
+
+<partial name="~/Views/Shared/_MessageResult.cshtml" />
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success btn-icon-split">
+        <span class="icon text-white-50">
+            <i class="fas fa-plus"></i>
+        </span>
+        <span class="text">Cadastrar nova tarefa</span>
+    </a>
+</p>
+
+
+@foreach (var item in Model)
+{
+    <h4>@item.name</h4>
+
+    <table id="table-tasks" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayName(item.tasks[0].taskCode)
+                </th>
+                <th>
+                    @Html.DisplayName(item.tasks[0].subject)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var task in item.tasks)
+            {
+                <tr>
+                    <td>
+                        @Html.Display(task.taskCode)
+                    </td>
+                    <td>
+                        @Html.Display(task.subject)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    @*@foreach (var task in item.tasks)
+    {
+
+        <p>
+            @task.taskCode <br />
+            @task.subject <br />
+            @task.description <br />
+        </p>
+    }*@
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<table id="table-projects" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.projectId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.framework)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.dateCreated)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr onclick="Redirect('@Url.Action("Edit", new { projectId = item.projectId })')">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.projectId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.framework)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.dateCreated)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
+
+@section scripts {
+    <script src="~/lib/DataTables/js/jquery.dataTables.js"></script>
+    <script src="~/lib/DataTables/datatables.js"></script>
+    <script src="~/lib/DataTables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/DatatableConfig.js"></script>
+
+    <script>
+        //$('#table-tasks').DataTable(getDataTableConfig());
+    </script>
+}

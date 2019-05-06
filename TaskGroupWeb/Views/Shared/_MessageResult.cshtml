@@ -1,0 +1,10 @@
+﻿@using TaskGroupWeb.Helpers
+
+@if (TempData[OperationResult.Error.ToString()] != null)
+{
+    <p class="alert alert-danger">@TempData[OperationResult.Error.ToString()]</p>
+}
+else if (TempData[OperationResult.Success.ToString()] != null)
+{
+    <p class="alert alert-success">@TempData[OperationResult.Success.ToString()]</p>
+}

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Objetos;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TaskGroupWeb.Models
@@ -22,5 +24,7 @@ namespace TaskGroupWeb.Models
 
         [Display(Name = "Data de cadastro")]
         public DateTime dateCreated { get; set; }
+
+        public List<TaskModel> tasks { get; set; }
     }
 }
