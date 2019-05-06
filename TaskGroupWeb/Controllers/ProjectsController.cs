@@ -36,26 +36,14 @@ namespace TaskGroupWeb.Controllers
         {
             try
             {
-                var projects = new List<ProjectModel>(); //_mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
-
-                if (projects.Count <= 0)
-                {
-                    projects.Add(new ProjectModel
-                    {
-                        projectId = 1,
-                        name = "TaskGroup",
-                        description = "-",
-                        framework = "ASP NET CORE C#",
-                        dateCreated = DateTime.Now
-                    });
-                }
+                var projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
 
                 return View(projects);
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData["Error"] = "Ocorreu um erro ao carregar projetos!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projetos!";
                 return RedirectToAction("Index", "Home");
             }
         }
@@ -69,7 +57,7 @@ namespace TaskGroupWeb.Controllers
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData["Error"] = "Ocorreu um erro inesperado!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro inesperado!";
                 return RedirectToAction("Index");
             }
         }
@@ -78,7 +66,7 @@ namespace TaskGroupWeb.Controllers
         {
             try
             {
-                var project = _db.DbProject.Find(projectId);
+                var project = _db.DbProject.Select(projectId);
                 var projectModel = _mapper.Map<ProjectModel>(project);
 
                 return View(projectModel);
@@ -86,10 +74,9 @@ namespace TaskGroupWeb.Controllers
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData["Error"] = "Ocorreu um erro ao carregar projeto!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projeto!";
                 return RedirectToAction("Index");
             }
-
         }
 
         [HttpPost]
@@ -103,19 +90,19 @@ namespace TaskGroupWeb.Controllers
                     var project = _mapper.Map<Project>(projectModel);
                     _db.DbProject.Insert(project);
 
-                    TempData["Success"] = "Projeto salvo com sucesso!";
+                    TempData[OperationResult.Success.ToString()] = "Projeto salvo com sucesso!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    TempData["Error"] = "Por favor preencha todos os campos obrigatórios!";
+                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
                     return View(projectModel);
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                ViewData["Error"] = "Ocorreu um erro ao salvar projeto!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao salvar projeto!";
                 return RedirectToAction("Index");
             }
         }
@@ -131,19 +118,19 @@ namespace TaskGroupWeb.Controllers
                     var project = _mapper.Map<Project>(projectModel);
                     _db.DbProject.Update(project);
 
-                    TempData["Success"] = "Projeto salvo com sucesso!";
+                    TempData[OperationResult.Success.ToString()] = "Projeto salvo com sucesso!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    TempData["Error"] = "Por favor preencha todos os campos obrigatórios!";
+                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
                     return View(projectModel);
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData["Error"] = "Ocorreu um erro ao carregar projeto!";
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projeto!";
                 return RedirectToAction("Index");
             }
 

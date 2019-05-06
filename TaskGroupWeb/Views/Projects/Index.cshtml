@@ -1,4 +1,5 @@
-﻿@model IEnumerable<TaskGroupWeb.Models.ProjectModel>
+﻿@using TaskGroupWeb.Helpers
+@model IEnumerable<TaskGroupWeb.Models.ProjectModel>
 
 @{
     ViewData["Title"] = "Projetos";
@@ -10,14 +11,13 @@
     <link href="~/lib/DataTables/css/dataTables.bootstrap4.css" />
 }
 
-@if (TempData["Error"] != null)
+@if (TempData[OperationResult.Error.ToString()] != null)
 {
-    <p class="alert alert-danger">@TempData["Error"]</p>
+    <p class="alert alert-danger">@TempData[OperationResult.Error.ToString()]</p>
 }
-
-@if (TempData["Sucess"] != null)
+else if (TempData[OperationResult.Success.ToString()] != null)
 {
-    <p class="alert alert-success">@TempData["Sucess"]</p>
+    <p class="alert alert-success">@TempData[OperationResult.Success.ToString()]</p>
 }
 
 <h2>@ViewData["Title"]</h2>

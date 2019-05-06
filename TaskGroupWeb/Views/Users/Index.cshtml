@@ -1,4 +1,5 @@
-﻿@model IEnumerable<TaskGroupWeb.Models.UserModel>
+﻿@using TaskGroupWeb.Helpers
+@model IEnumerable<TaskGroupWeb.Models.UserModel>
 
 @{
     ViewData["Title"] = "Usuários";
@@ -10,17 +11,16 @@
     <link href="~/lib/DataTables/css/dataTables.bootstrap4.css" />
 }
 
-@if (TempData["Error"] != null)
+@if (TempData[OperationResult.Error.ToString()] != null)
 {
-    <p class="alert alert-danger">@TempData["Error"]</p>
+    <p class="alert alert-danger">@TempData[OperationResult.Error.ToString()]</p>
+}
+else if (TempData[OperationResult.Success.ToString()] != null)
+{
+    <p class="alert alert-success">@TempData[OperationResult.Success.ToString()]</p>
 }
 
-@if (TempData["Sucess"] != null)
-{
-    <p class="alert alert-success">@TempData["Sucess"]</p>
-}
-
-<h2>@ViewData["Ttile"]</h2>
+<h2>@ViewData["Title"]</h2>
 
 <p>
     <a asp-action="Create" class="btn btn-success btn-icon-split">

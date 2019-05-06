@@ -34,8 +34,17 @@ namespace TaskGroupWeb.Controllers
 
         public IActionResult Index()
         {
-            var users = _mapper.Map<IList<User>, IList<UserModel>>(_db.DbUser.List());
-            return View(users);
+            try
+            {
+                var users = _mapper.Map<IList<User>, IList<UserModel>>(_db.DbUser.List());
+                return View(users);
+            }
+            catch (Exception e)
+            {
+                Logger.SaveLog(e, _configuration);
+                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar usuários!";
+                return RedirectToAction("Index", "Home");
+            }            
         }
 
         public IActionResult Edit(int idUser)
@@ -48,7 +57,7 @@ namespace TaskGroupWeb.Controllers
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData["Error"] = "Erro ao carregar usuário!";
+                TempData[OperationResult.Error.ToString()] = "Erro ao carregar usuário!";
                 return RedirectToAction("Index");
             }
         }
@@ -79,19 +88,19 @@ namespace TaskGroupWeb.Controllers
                     var user = _mapper.Map<User>(userModel);
                     _db.DbUser.Update(user);
 
-                    TempData["Sucess"] = "Usuário atualizado com sucesso!";
+                    TempData[OperationResult.Success.ToString()] = "Usuário atualizado com sucesso!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    TempData["Error"] = "Por favor preencha todos os campos obrigatórios!";
+                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
                     return RedirectToAction("Index");
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData["Error"] = "Erro ao atualizar usuário!";
+                TempData[OperationResult.Error.ToString()] = "Erro ao atualizar usuário!";
                 return RedirectToAction("Index");
             }
         }
@@ -111,7 +120,7 @@ namespace TaskGroupWeb.Controllers
 
                     if (!isValid)
                     {
-                        TempData["Error"] = "Já existe um usuário cadastrado com este e-mail!";
+                        TempData[OperationResult.Error.ToString()] = "Já existe um usuário cadastrado com este e-mail!";
                         return View(userModel);
                     }
 
@@ -122,19 +131,19 @@ namespace TaskGroupWeb.Controllers
                     var user = _mapper.Map<User>(userModel);                    
                     _db.DbUser.Insert(user);
 
-                    TempData["Sucess"] = "Usuário salvo com sucesso!";
+                    TempData[OperationResult.Success.ToString()] = "Usuário salvo com sucesso!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    TempData["Error"] = "Por favor preencha todos os campos obrigatórios!";
+                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
                     return View(userModel);
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData["Error"] = "Erro ao salvar usuário";
+                TempData[OperationResult.Error.ToString()] = "Erro ao salvar usuário";
                 return View(userModel);
             }
         }

@@ -22,7 +22,6 @@ namespace TaskGroupWeb.Helpers
             using (StreamWriter w = new StreamWriter(filePath, true, Encoding.UTF8))
             {
                 w.WriteLine($"{DateTime.Now.TimeOfDay} - [Source: {e.Source}] [Message: {e.Message}]");
-                w.WriteLine("");
             }
         }
     }
