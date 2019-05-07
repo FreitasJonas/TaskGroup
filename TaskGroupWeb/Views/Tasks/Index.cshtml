@@ -1,0 +1,122 @@
+﻿@model IEnumerable<TaskGroupWeb.Models.ProjectModel>
+
+@{
+    ViewData["Title"] = "Tarefas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    <link href="~/lib/DataTables/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="~/lib/DataTables/datatables.css" rel="stylesheet" />
+    <link href="~/lib/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/css/datatable/custom.css" rel="stylesheet" />
+}
+
+<partial name="~/Views/Shared/_MessageResult.cshtml" />
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success btn-icon-split">
+        <span class="icon text-white-50">
+            <i class="fas fa-plus"></i>
+        </span>
+        <span class="text">Cadastrar nova tarefa</span>
+    </a>
+</p>
+
+@foreach (var item in Model)
+{
+    <!-- Dropdown Card Example -->
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <a href="#" class="btn btn-primary btn-sm">
+                    <i class="fas fa-tasks"></i>
+                </a> @item.name ( @item.tasks.Count() )
+            </h6>
+            <div class="dropdown no-arrow">
+
+                @*<a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>*@
+
+                <!-- Card Header - Accordion -->
+                <a href="#@item.name.Replace(" ", "_")" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                    @*<h6 class="m-0 font-weight-bold text-primary">Collapsable Card Example</h6>*@
+                </a>
+
+            </div>
+        </div>
+
+        <div class="collapse show" id="@item.name.Replace(" ", "_")">
+
+            <!-- Card Body -->
+            <div class="card-body">
+
+                <div class="task-container">
+                    <table id="table-tasks" class="table table-striped table-hover table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayName("TaskID")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Código")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Assunto")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Descrição")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Status")
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var task in item.tasks)
+                            {
+                            <tr onclick="Redirect('@Url.Action("Edit", "Tasks", new { taskId = task.taskId })')">
+                                <td>
+                                    @task.taskId.ToString()
+                                </td>
+                                <td>
+                                    @task.taskCode
+                                </td>
+                                <td>
+                                    @task.subject
+                                </td>
+                                <td>
+                                    @task.description
+                                </td>
+                                <td>
+                                    @task.status.ToString()
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+}
+
+@section scripts {
+    <script src="~/lib/DataTables/js/jquery.dataTables.js"></script>
+    <script src="~/lib/DataTables/datatables.js"></script>
+    <script src="~/lib/DataTables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/DatatableConfig.js"></script>
+
+    <script>
+        $('.table').DataTable(getDataTableConfig());
+    </script>
+}

@@ -1,6 +1,7 @@
 ﻿using Objetos;
 using System;
 using System.Collections.Generic;
+using static Objetos.DbEnumerators;
 
 namespace Acesso
 {
@@ -77,7 +78,7 @@ namespace Acesso
                     _task.userOwnId = Reader.GetInt32("user_own");
                     _task.subject = Reader.GetString("subject");
                     _task.description = Reader.GetString("description");
-                    _task.status = Reader.GetInt32("status");
+                    _task.status = (TaskStatus) Reader.GetInt32("status");
                     _task.dateCreated = Reader.GetDateTime("dt_create");
                     _task.dateSla = Reader.GetDateTime("dt_sla");
                     _task.dateFinaly = Reader.GetDateTime("dt_finaly");
@@ -119,7 +120,7 @@ namespace Acesso
                     _task.userOwnId   = Reader.GetInt32("user_own");
                     _task.subject     = Reader.GetString("subject");
                     _task.description = Reader.GetString("description");
-                    _task.status      = Reader.GetInt32("status");
+                    _task.status      = (TaskStatus) Reader.GetInt32("status");
                     _task.dateCreated = Reader.GetDateTime("dt_create");
                     _task.dateSla     = Reader.GetDateTime("dt_sla");
                     _task.dateFinaly = Reader.GetDateTime("dt_finaly");
@@ -161,7 +162,7 @@ namespace Acesso
                     _task.userOwnId = Reader.GetInt32("user_own");
                     _task.subject = Reader.GetString("subject");
                     _task.description = Reader.GetString("description");
-                    _task.status = Reader.GetInt32("status");
+                    _task.status = (TaskStatus) Reader.GetInt32("status");
                     _task.dateCreated = Reader.GetDateTime("dt_create");
                     _task.dateSla = Reader.GetDateTime("dt_sla");
                     _task.dateFinaly = Reader.GetDateTime("dt_finaly");

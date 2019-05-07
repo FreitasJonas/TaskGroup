@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TaskGroupWeb.Helpers;
 using TaskGroupWeb.Models;
+using static Objetos.DbEnumerators;
 
 namespace TaskGroupWeb.Controllers
 {
-    public class TaskController : Controller
+    public class TasksController : Controller
     {
         public DbContext _db { get; set; }
         public IDataProtector _protector { get; set; }
@@ -21,7 +22,7 @@ namespace TaskGroupWeb.Controllers
         private IMapper _mapper;
         private readonly string _tipoAutenticacao;
 
-        public TaskController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration, IMapper mapper)
+        public TasksController(DbContext _db, IDataProtectionProvider protectionProvider, IConfiguration configuration, IMapper mapper)
         {
             this._db = _db;
             this._protector = protectionProvider.CreateProtector(configuration.GetSection("ChaveCriptografia").Value);
@@ -76,7 +77,9 @@ namespace TaskGroupWeb.Controllers
                 var task = _db.DbTask.Select(taskId);
                 var taskModel = _mapper.Map<TaskModel>(task);
 
-                ArrangeDropDownToEdit(taskModel);
+                var user = _mapper.Map<UserModel>(_db.DbUser.Select(task.userOwnId));
+
+                ArrangeDropDownToEdit(taskModel, user);
                 return View(taskModel);
             }
             catch (Exception e)
@@ -96,6 +99,7 @@ namespace TaskGroupWeb.Controllers
                 if (ModelState.IsValid)
                 {
                     var task = _mapper.Map<Task>(taskModel);
+                    task.dateCreated = DateTime.Now;
                     task.taskId = _db.DbTask.Insert(task);
                     task.taskCode = TaskCodeGenerator.Generate(task.taskId);
 
@@ -135,7 +139,8 @@ namespace TaskGroupWeb.Controllers
                 }
                 else
                 {
-                    ArrangeDropDownToEdit(taskModel);
+                    var user = _mapper.Map<UserModel>(_db.DbUser.Select(taskModel.userOwnId));
+                    ArrangeDropDownToEdit(taskModel, user);
                     TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
                     return View(taskModel);
                 }
@@ -156,10 +161,10 @@ namespace TaskGroupWeb.Controllers
             ViewBag.Projects = HtmlDropDownHelper.GetDropDownList(_db.DbProject.List(), "projectId", "name");
         }
 
-        private void ArrangeDropDownToEdit(TaskModel task)
+        private void ArrangeDropDownToEdit(TaskModel task, UserModel user)
         {
-            ViewBag.Status = HtmlDropDownHelper.GetDropDownFromEnum<TaskStatus>(task.status);
-            //ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "name", "userId");
+            ViewBag.Status = HtmlDropDownHelper.GetDropDownFromEnum<TaskStatus>((int)task.status);
+            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name", user.name);
         }
     }
 }

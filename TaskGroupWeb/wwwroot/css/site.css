@@ -39,3 +39,20 @@ for details on configuring this project to bundle and minify static web assets. 
 label {
     font-weight: 700 !important;
 }
+
+.task-container {
+    padding: 10px 5px 10px 30px;
+}
+
+.project-container {
+    padding: 10px 0px 0px 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ffa8a8;
+    border-radius: 5px;
+}
+
+.table-bordered {
+    border: 1px solid #e3e6f0 !important;
+    border-radius: 5px !important;
+}

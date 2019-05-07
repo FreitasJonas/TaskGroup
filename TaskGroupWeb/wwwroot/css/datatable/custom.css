@@ -33,6 +33,8 @@ table.dataTable {
     clear: both;
     border-collapse: separate;
     border-spacing: 0;
+
+    margin-bottom: 15px !important;
     /*
    * Header and footer styles
    */

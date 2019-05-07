@@ -1,0 +1,100 @@
+﻿@model TaskGroupWeb.Models.TaskModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<partial name="~/Views/Shared/_MessageResult.cshtml" />
+
+<h2>@ViewData["Title"]</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="taskId" class="form-control" hidden />
+            </div>
+            <div class="form-group">
+                <input asp-for="projectId" class="form-control" hidden />
+            </div>
+            <div class="form-group">
+                <label asp-for="taskCode" class="control-label"></label>
+                <input asp-for="taskCode" class="form-control" disabled />
+                <span asp-validation-for="taskCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
+                <div class="input-size">
+                    @Html.DropDownList("userOwnId", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="subject" class="control-label"></label>
+                <input asp-for="subject" class="form-control" />
+                <span asp-validation-for="subject" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="description" class="control-label"></label>
+                <input asp-for="description" class="form-control" />
+                <span asp-validation-for="description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.status, new { @class = "control-label" })
+                <div class="input-size">
+                    @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.status, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="dateCreated" class="control-label"></label>
+                <input asp-for="dateCreated" class="form-control" disabled />
+                <span asp-validation-for="dateCreated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="dateSla" class="control-label"></label>
+                <input asp-for="dateSla" class="form-control" disabled />
+                <span asp-validation-for="dateSla" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="dateFinaly" class="control-label"></label>
+                <input asp-for="dateFinaly" class="form-control" disabled />
+                <span asp-validation-for="dateFinaly" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Salvar</span>
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary btn-icon-split">
+        <span class="icon text-white-50">
+            <i class="fas fa-backward"></i>
+        </span>
+        <span class="text">Voltar a lista</span>
+    </a>
+</div>
+
+<br />
+
+@section scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+}
+
+

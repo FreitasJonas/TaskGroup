@@ -16,9 +16,7 @@
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="userId" class="control-label"></label>
                 <input asp-for="userId" class="form-control" hidden />
-                <span asp-validation-for="userId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="login" class="control-label"></label>
