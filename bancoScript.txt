@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `param` (
   PRIMARY KEY (`nm_nome`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.param: 0 rows
+-- Copiando dados para a tabela taskdb.param: 2 rows
 /*!40000 ALTER TABLE `param` DISABLE KEYS */;
 INSERT INTO `param` (`nm_nome`, `nm_valor`, `nr_status`, `nm_desc`) VALUES
 	('project_frameworks_01', 'Asp.Net Core C#', 0, '-'),
@@ -57,13 +57,13 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `framework` varchar(50) NOT NULL,
   `dt_create` datetime NOT NULL,
   PRIMARY KEY (`id_project`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.projects: ~7 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.projects: ~2 rows (aproximadamente)
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
 INSERT INTO `projects` (`id_project`, `name`, `nm_desc`, `framework`, `dt_create`) VALUES
-	(9, 'TaskGroup', 'Teste', 'Asp.Net Core C#', '2019-05-06 12:56:59'),
-	(13, 'Tasker Group', 'Teste', 'Asp.Net Core C#', '2019-05-06 20:51:06');
+	(14, 'Tasker Group', 'Sistema de tarefas em grupo', 'Asp.Net Core C#', '2019-05-07 18:39:14'),
+	(15, 'ShoppingTrem', 'Jogo Mobile', 'Unity C#', '2019-05-07 19:03:30');
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.tasks
@@ -80,16 +80,16 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `dt_sla` datetime DEFAULT NULL,
   `dt_finaly` datetime DEFAULT NULL,
   PRIMARY KEY (`id_task`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.tasks: 0 rows
+-- Copiando dados para a tabela taskdb.tasks: 6 rows
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
 INSERT INTO `tasks` (`id_task`, `id_project`, `cod_task`, `user_own`, `subject`, `description`, `status`, `dt_create`, `dt_sla`, `dt_finaly`) VALUES
-	(4, 13, '2019-5-00004', 1, 'Teste', 'Teste', 1, '0001-01-01 00:00:00', '2010-01-01 01:01:00', '0001-01-01 00:00:00'),
-	(2, 9, '2019-5-00002', 1, 'teste', 'Teste', 2, '0001-01-01 00:00:00', '1996-10-12 01:01:00', '0001-01-01 00:00:00'),
-	(3, 9, '2019-5-00003', 1, 'Teste', 'Teste', 1, '0001-01-01 00:00:00', '1996-12-10 06:06:00', '0001-01-01 00:00:00'),
-	(5, 13, '2019-5-00005', 5, 'Teste', 'Teste', 1, '0001-01-01 00:00:00', '2010-10-10 01:01:00', '0001-01-01 00:00:00'),
-	(6, 13, '2019-5-00006', 5, 'Teste', 'Tarefas 345345', 1, '2019-05-06 21:30:04', '2010-10-10 01:01:00', '0001-01-01 00:00:00');
+	(9, 14, '2019-5-00009', 1, 'Tarefas Edit', 'Inserir campo para mensagem com summerNote', 1, '2019-05-07 18:54:23', '0001-01-01 00:00:00', '0001-01-01 00:00:00'),
+	(8, 14, '2019-5-00008', 1, 'GetDropDownFromEnum<TEnum>()', 'Verificar listagem com topValue', 1, '2019-05-07 18:52:14', '0001-01-01 00:00:00', '0001-01-01 00:00:00'),
+	(7, 14, '2019-5-00007', 1, 'Campos tipo data', 'Colocar os campos do tipo data com o datePicker Jquery', 1, '2019-05-07 18:40:44', '0001-01-01 00:00:00', '0001-01-01 00:00:00'),
+	(10, 14, '2019-5-00010', 1, 'Tarefas Edit', 'Inserir botão "finalizar tarefa"', 1, '2019-05-07 18:55:05', '0001-01-01 00:00:00', '0001-01-01 00:00:00'),
+	(11, 14, '2019-5-00011', 1, 'Serviços', 'Desenvolver serviço de e-mail para notificação dos participantes', 1, '2019-05-07 18:56:22', '0001-01-01 00:00:00', '0001-01-01 00:00:00');
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.users
@@ -106,12 +106,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `senha` (`pass`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.users: 3 rows
+-- Copiando dados para a tabela taskdb.users: 1 rows
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id_user`, `login`, `pass`, `name`, `contact`, `dt_create`) VALUES
-	(1, 'jonascontato15@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Azevedo', '11955572997', '2019-05-03 09:35:35'),
-	(6, 'jonascontato145@gmail.com', '040B7CF4A55014E185813E0644502EA9', 'Jonas Freitas Azevedo', '11955572997', '2019-05-05 22:12:42'),
-	(5, 'jonascontato155@gmail.com', '4297F44B13955235245B2497399D7A93', 'Jonas Teste', '11955572997', '2019-05-05 19:44:27');
+	(1, 'jonascontato15@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Azevedo', '11955572997', '2019-05-03 09:35:35');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

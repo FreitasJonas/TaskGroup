@@ -1,100 +1,205 @@
 ﻿@model TaskGroupWeb.Models.TaskModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Tarefa";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    <link rel="stylesheet" href="~/lib/summer/summernote.css" />
+    <link rel="stylesheet" href="~/lib/jquery-ui-1.12.1/jquery-ui.css" />
 }
 
 <partial name="~/Views/Shared/_MessageResult.cshtml" />
 
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewData["Title"] - @Model.taskCode</h2>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input asp-for="taskId" class="form-control" hidden />
-            </div>
-            <div class="form-group">
-                <input asp-for="projectId" class="form-control" hidden />
-            </div>
-            <div class="form-group">
-                <label asp-for="taskCode" class="control-label"></label>
-                <input asp-for="taskCode" class="form-control" disabled />
-                <span asp-validation-for="taskCode" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
-                <div class="input-size">
-                    @Html.DropDownList("userOwnId", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
-                </div>
+<!-- Dropdown Card Example -->
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Tarefa</h6>
+        <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">Ações:</div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#message-modal"><i class="fas fa-pencil-alt fa-sm fa-fw text-gray-400"></i> Escrever mensagem</a>
+                <a class="dropdown-item" href="#"><i class="fas fa-hand-holding fa-sm fa-fw text-gray-400"></i> Pegar tarefa</a>
+                <a class="dropdown-item" href="#"><i class="fas fa-stop-circle fa-sm fa-fw text-gray-400"></i> Pausar tarefa</a>
+                <a class="dropdown-item" href="#"><i class="fas fa-times-circle fa-sm fa-fw text-gray-400"></i> Fechar Tarefa</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#"> <i class="fas fa-code-branch fa-sm fa-fw text-gray-400"></i> Ver no Git</a>
             </div>
-
-            <div class="form-group">
-                <label asp-for="subject" class="control-label"></label>
-                <input asp-for="subject" class="form-control" />
-                <span asp-validation-for="subject" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="description" class="control-label"></label>
-                <input asp-for="description" class="form-control" />
-                <span asp-validation-for="description" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.status, new { @class = "control-label" })
-                <div class="input-size">
-                    @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.status, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="dateCreated" class="control-label"></label>
-                <input asp-for="dateCreated" class="form-control" disabled />
-                <span asp-validation-for="dateCreated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="dateSla" class="control-label"></label>
-                <input asp-for="dateSla" class="form-control" disabled />
-                <span asp-validation-for="dateSla" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="dateFinaly" class="control-label"></label>
-                <input asp-for="dateFinaly" class="form-control" disabled />
-                <span asp-validation-for="dateFinaly" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-success btn-icon-split">
-                    <span class="icon text-white-50">
-                        <i class="fas fa-check"></i>
-                    </span>
-                    <span class="text">Salvar</span>
-                </button>
-            </div>
-
-        </form>
+        </div>
     </div>
-</div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
 
-<div>
-    <a asp-action="Index" class="btn btn-secondary btn-icon-split">
-        <span class="icon text-white-50">
-            <i class="fas fa-backward"></i>
-        </span>
-        <span class="text">Voltar a lista</span>
-    </a>
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <input asp-for="taskId" class="form-control" hidden />
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="projectId" class="form-control" hidden />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="taskCode" class="control-label"></label>
+                        <input asp-for="taskCode" class="form-control" disabled />
+                        <span asp-validation-for="taskCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
+                        <div class="input-size">
+                            @Html.DropDownList("userOwnId", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="subject" class="control-label"></label>
+                        <input asp-for="subject" class="form-control" />
+                        <span asp-validation-for="subject" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.status, new { @class = "control-label" })
+                        <div class="input-size">
+                            @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.status, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="description" class="control-label"></label>
+                        <textarea asp-for="description" class="form-control"></textarea>
+                        <span asp-validation-for="description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="dateCreated" class="control-label"></label>
+                        <input asp-for="dateCreated" class="form-control" disabled />
+                        <span asp-validation-for="dateCreated" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="dateSla" class="control-label"></label>
+                        <input asp-for="dateSla" class="form-control" />
+                        <span asp-validation-for="dateSla" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="dateFinaly" class="control-label"></label>
+                        <input asp-for="dateFinaly" class="form-control" disabled />
+                        <span asp-validation-for="dateFinaly" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-icon-split">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span class="text">Salvar</span>
+                        </button>
+
+                        <br /><br />
+
+                        <div>
+                            <a asp-action="Index" class="btn btn-secondary btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-backward"></i>
+                                </span>
+                                <span class="text">Voltar a lista</span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <!-- Basic Card Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
+                    </div>
+                    <div class="card-body">
+                        The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!
+                    </div>
+                </div>
+
+                <!-- Basic Card Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
+                    </div>
+                    <div class="card-body">
+                        The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 <br />
 
-@section scripts {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-}
+<div class="modal fade" id="message-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Deixe sua mensagem</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
 
+                <form asp-action="Edit" enctype="multipart/form-data">
+
+                    <textarea id="summer"></textarea>
+
+                    <br />
+                    <input type="file" value="Anexar arquivos" />
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                <a class="btn btn-primary" href="login.html">Enviar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/summer/summernote.js"></script>
+    <script src="~/lib/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#dateSla").datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+
+            $('#summer').summernote({
+                height: 200,
+                popover: {
+                    image: [],
+                    link: [],
+                    air: []
+                }
+            });
+        })
+    </script>
+}
 

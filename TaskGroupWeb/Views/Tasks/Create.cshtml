@@ -5,15 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section css {
+    <link rel="stylesheet" href="~/lib/summer/summernote.css" />
+    <link rel="stylesheet" href="~/lib/jquery-ui-1.12.1/jquery-ui.css" />
+}
+
 <partial name="~/Views/Shared/_MessageResult.cshtml" />
 
 <h2>@ViewData["Title"]</h2>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
             <div class="form-group">
                 <input asp-for="taskId" class="form-control" value="0" hidden />
             </div>
@@ -41,12 +46,6 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="description" class="control-label"></label>
-                <input asp-for="description" class="form-control" />
-                <span asp-validation-for="description" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
                 @Html.LabelFor(m => m.status, new { @class = "control-label" })
                 <div class="input-size">
                     @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control" })
@@ -56,8 +55,14 @@
 
             <div class="form-group">
                 <label asp-for="dateSla" class="control-label"></label>
-                <input asp-for="dateSla" class="form-control" />
+                <input asp-for="dateSla" type="text" class="form-control" style="position: relative; z-index: 100000;" />
                 <span asp-validation-for="dateSla" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="description" class="control-label"></label>
+                <textarea asp-for="description" class="form-control"></textarea>
+                <span asp-validation-for="description" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -82,9 +87,27 @@
     </a>
 </div>
 
-
 @section scripts{
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/summer/summernote.js"></script>
+    <script src="~/lib/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#dateSla").datepicker({
+                dateFormat: 'dd-mm-yy'
+            });
+
+            $('#summer').summernote({
+                height: 200,
+                popover: {
+                    image: [],
+                    link: [],
+                    air: []
+                }
+            });
+        })
+    </script>
 }
 
 
