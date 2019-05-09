@@ -56,6 +56,7 @@ namespace TaskGroupWeb.Controllers
                         var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, _user.name),
+                        new Claim("userId", _user.userId.ToString()),
                         new Claim("email", _user.login),
                         new Claim("contact", _user.contact),
                         new Claim("date.created", _user.dateCreated.ToString()),

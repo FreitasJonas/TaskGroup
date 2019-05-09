@@ -75,10 +75,13 @@ namespace TaskGroupWeb.Controllers
             try
             {
                 var task = _db.DbTask.Select(taskId);
+                //var messages = _db.DbMessage.List(task.taskId);
+                
                 var taskModel = _mapper.Map<TaskModel>(task);
+                //var messagesModel = _mapper.Map<IList<MessageModel>>(messages).ToList();
+                taskModel.messages = new List<MessageModel>(); //messagesModel;
 
                 var user = _mapper.Map<UserModel>(_db.DbUser.Select(task.userOwnId));
-
                 ArrangeDropDownToEdit(taskModel, user);
                 return View(taskModel);
             }
@@ -152,6 +155,39 @@ namespace TaskGroupWeb.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SendMessage(MessageModel messageModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var message = _mapper.Map<Message>(messageModel);
+                    message.userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userId").Value);
+                    message.dateCreated = DateTime.Now;
+
+                    _db.DbMessage.Insert(message);
+
+                    return Json(new
+                    {
+                        action = Url.Action("Edit", "Tasks", new { taskId = messageModel.taskId }),
+                        message = "Mensagem enviada com sucesso!",
+                        status = OperationResult.Success
+                    });
+                }
+                else
+                {
+                    return Json(new { status = OperationResult.Error, message = "Por favor preencha todos os campos obrigatórios!" }); 
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.SaveLog(e, _configuration);
+                return Json(new { status = OperationResult.Error, message = "Ocorreu um erro ao enviar mensagem!" });
+            }
         }
 
         private void ArrangeDropDownToCreate()

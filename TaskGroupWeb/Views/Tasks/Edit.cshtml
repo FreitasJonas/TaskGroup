@@ -124,25 +124,33 @@
 
             <div class="col-md-6">
 
-                <!-- Basic Card Example -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
+                @if (Model.messages.Count() == 0)
+                {
+                    <!-- Basic Card Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
+                        </div>
+                        <div class="card-body">
+                            Nenhuma mensagem encontrada!
+                        </div>
                     </div>
-                    <div class="card-body">
-                        The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!
-                    </div>
-                </div>
-
-                <!-- Basic Card Example -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
-                    </div>
-                    <div class="card-body">
-                        The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!
-                    </div>
-                </div>
+                }
+                else
+                {
+                    @foreach (var message in Model.messages)
+                    {
+                        <!-- Basic Card Example -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
+                            </div>
+                            <div class="card-body">
+                                The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!
+                            </div>
+                        </div>
+                    }
+                }
 
             </div>
         </div>
@@ -162,19 +170,22 @@
             </div>
             <div class="modal-body">
 
-                <form asp-action="Edit" enctype="multipart/form-data">
+                <div id="alert-message">
+                    <p class="alert alert-danger" id="alert-message-text"></p>
+                </div>
 
-                    <textarea id="summer"></textarea>
+                <form asp-action="SendMessage" id="form-message" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <textarea id="summer" name="message"></textarea>
 
                     <br />
-                    <input type="file" value="Anexar arquivos" />
-
                 </form>
 
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-                <a class="btn btn-primary" href="login.html">Enviar</a>
+                <button class="btn btn-primary" type="submit" form="form-message">Enviar</button>
             </div>
         </div>
     </div>
@@ -184,6 +195,39 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/summer/summernote.js"></script>
     <script src="~/lib/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+    <script>
+
+        $('#form-message').submit(function (e) {
+            e.preventDefault();
+
+            var url = $(this).attr("action");
+
+            let data = $(this).serializeArray();
+            data.push({ name: 'taskId', value: $('#taskId').val() });
+            data.push({ name: 'message', value: $('#summer').val() });
+
+            console.log(data)
+
+            submitAssync(url, data,
+                function (response) 
+                { 
+                    console.log(response)
+                    window.location.href = response.action
+                },
+                function (response)
+                {
+                    console.log(response) 
+                    $('#alert-message').attr('hidden', false)
+                    $('#alert-message-text').text(response.message);
+                })
+        })
+
+        $('#message-modal').on('show.bs.modal', function (e) {
+            $('#alert-message').attr('hidden', true)
+        })
+
+    </script>
 
     <script>
         $(document).ready(function () {

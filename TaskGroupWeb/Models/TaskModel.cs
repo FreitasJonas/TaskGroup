@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using static Objetos.DbEnumerators;
 
@@ -40,5 +41,7 @@ namespace TaskGroupWeb.Models
 
         [Display(Name = ("Data finalizado"))]
         public DateTime dateFinaly { get; set; }
+
+        public List<MessageModel> messages { get; set; }
     }
 }

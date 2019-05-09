@@ -8,6 +8,7 @@ namespace Acesso
         public ProjectAccess<Project> DbProject { get; set; }
         public ParamAccess<Param> DbParam { get; set; }   
         public TaskAccess<Task> DbTask { get; set; }
+        public MessageAccess<Message> DbMessage { get; set; }
 
         public DbContext(string strConnection)
         {
@@ -15,6 +16,7 @@ namespace Acesso
             DbProject = new ProjectAccess<Project>(strConnection);
             DbParam = new ParamAccess<Param>(strConnection);
             DbTask = new TaskAccess<Task>(strConnection);
+            DbMessage = new MessageAccess<Message>(strConnection);
         }
     }
 }
