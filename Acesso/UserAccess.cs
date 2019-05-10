@@ -56,7 +56,7 @@ namespace Acesso
             {
                 OpenDb();
 
-                var _user = Activator.CreateInstance<T>(); // new User();
+                var _user = Activator.CreateInstance<T>(); 
 
                 Cmd.CommandText = "select * from users where id_user = @id_user";
 

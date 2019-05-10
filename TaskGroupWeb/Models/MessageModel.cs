@@ -9,5 +9,12 @@ namespace TaskGroupWeb.Models
         public int userId { get; set; }
         public string message { get; set; }
         public DateTime dateCreated { get; set; }
+
+        public UserModel user;
+
+        public MessageModel()
+        {
+            user = new UserModel();
+        }
     }
 }

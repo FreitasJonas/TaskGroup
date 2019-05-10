@@ -70,19 +70,34 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
-        public IActionResult Edit(int taskId)
+        public IActionResult Edit(int taskId, string message = "")
         {
             try
             {
+                #region prepare data
+
                 var task = _db.DbTask.Select(taskId);
-                //var messages = _db.DbMessage.List(task.taskId);
-                
+                var messages = _db.DbMessage.List(task.taskId);
+
                 var taskModel = _mapper.Map<TaskModel>(task);
-                //var messagesModel = _mapper.Map<IList<MessageModel>>(messages).ToList();
-                taskModel.messages = new List<MessageModel>(); //messagesModel;
+                var messagesModel = _mapper.Map<IList<MessageModel>>(messages).ToList();
+                taskModel.messages = messagesModel;
+
+                foreach (var _message in messagesModel)
+                {
+                    _message.user = _mapper.Map<UserModel>(_db.DbUser.Select(_message.userId));
+                }
+
+                #endregion
 
                 var user = _mapper.Map<UserModel>(_db.DbUser.Select(task.userOwnId));
                 ArrangeDropDownToEdit(taskModel, user);
+
+                if (!string.IsNullOrEmpty(message))
+                {
+                    TempData[OperationResult.Success.ToString()] = message;
+                }
+
                 return View(taskModel);
             }
             catch (Exception e)
@@ -173,8 +188,7 @@ namespace TaskGroupWeb.Controllers
 
                     return Json(new
                     {
-                        action = Url.Action("Edit", "Tasks", new { taskId = messageModel.taskId }),
-                        message = "Mensagem enviada com sucesso!",
+                        action = Url.Action("Edit", "Tasks", new { taskId = messageModel.taskId, message = "Mensagem enviada com sucesso!" }),
                         status = OperationResult.Success
                     });
                 }

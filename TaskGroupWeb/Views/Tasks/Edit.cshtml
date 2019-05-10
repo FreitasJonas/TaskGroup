@@ -20,7 +20,7 @@
 <div class="card shadow mb-4">
     <!-- Card Header - Dropdown -->
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">Tarefa</h6>
+        <h6 class="m-0 font-weight-bold text-primary"> <i class="fas fa-tasks"></i> Tarefa</h6>
         <div class="dropdown no-arrow">
             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -39,106 +39,28 @@
     <!-- Card Body -->
     <div class="card-body">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-9">
 
-                <form asp-action="Edit">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <input asp-for="taskId" class="form-control" hidden />
-                    </div>
-                    <div class="form-group">
-                        <input asp-for="projectId" class="form-control" hidden />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="taskCode" class="control-label"></label>
-                        <input asp-for="taskCode" class="form-control" disabled />
-                        <span asp-validation-for="taskCode" class="text-danger"></span>
+                <div class="form-group">
+                    <button class="btn btn-success btn-icon-split" data-toggle="modal" data-target="#message-modal">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span class="text">Escrever mensagem</span>
+                    </button>
                     </div>
 
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
-                        <div class="input-size">
-                            @Html.DropDownList("userOwnId", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label asp-for="subject" class="control-label"></label>
-                        <input asp-for="subject" class="form-control" />
-                        <span asp-validation-for="subject" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.status, new { @class = "control-label" })
-                        <div class="input-size">
-                            @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.status, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label asp-for="description" class="control-label"></label>
-                        <textarea asp-for="description" class="form-control"></textarea>
-                        <span asp-validation-for="description" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label asp-for="dateCreated" class="control-label"></label>
-                        <input asp-for="dateCreated" class="form-control" disabled />
-                        <span asp-validation-for="dateCreated" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="dateSla" class="control-label"></label>
-                        <input asp-for="dateSla" class="form-control" />
-                        <span asp-validation-for="dateSla" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="dateFinaly" class="control-label"></label>
-                        <input asp-for="dateFinaly" class="form-control" disabled />
-                        <span asp-validation-for="dateFinaly" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success btn-icon-split">
-                            <span class="icon text-white-50">
-                                <i class="fas fa-check"></i>
-                            </span>
-                            <span class="text">Salvar</span>
-                        </button>
-
-                        <br /><br />
-
-                        <div>
-                            <a asp-action="Index" class="btn btn-secondary btn-icon-split">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-backward"></i>
-                                </span>
-                                <span class="text">Voltar a lista</span>
-                            </a>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-
-            <div class="col-md-6">
-
-                @if (Model.messages.Count() == 0)
+                @if (TaskGroupWeb.Helpers.UserUtilities.UserIsTaskOwn(User.Claims, Model))
                 {
-                    <!-- Basic Card Example -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
-                        </div>
-                        <div class="card-body">
-                            Nenhuma mensagem encontrada!
-                        </div>
-                    </div>
+                    <p>Dono</p>
                 }
                 else
                 {
-                    @foreach (var message in Model.messages)
+                    <p>Não Dono</p>
+                }
+
+
+                    @if (Model.messages.Count() == 0)
                     {
                         <!-- Basic Card Example -->
                         <div class="card shadow mb-4">
@@ -146,14 +68,121 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Mensagens</h6>
                             </div>
                             <div class="card-body">
-                                The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!
+                                Nenhuma mensagem encontrada!
                             </div>
                         </div>
                     }
-                }
+                    else
+                    {
+                        @foreach (var message in Model.messages)
+                        {
+                            <!-- Basic Card Example -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary"> <i class="fas fa-user"></i> @message.user.name ( @message.user.login ) </h6>
+                                    <h6 class="m-0 font-weight-bold text-primary"> <i class="fas fa-calendar"></i> @message.dateCreated</h6>
+                                </div>
+                                <div class="card-body">
+                                    @Html.Raw(@message.message)
+                                </div>
+                            </div>
+                        }
+                    }
 
+                </div>
+
+                <div class="col-md-3">
+
+                    <!-- Basic Card Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary"> <i class="fas fa-info"></i> Info</h6>
+                        </div>
+                        <div class="card-body">
+
+                            <form asp-action="Edit">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <input asp-for="taskId" class="form-control" hidden />
+                                </div>
+                                <div class="form-group">
+                                    <input asp-for="projectId" class="form-control" hidden />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="taskCode" class="control-label"></label>
+                                    <input asp-for="taskCode" class="form-control" disabled />
+                                    <span asp-validation-for="taskCode" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
+                                    <div class="input-size">
+                                        @Html.DropDownList("userOwnId", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="subject" class="control-label"></label>
+                                    <input asp-for="subject" class="form-control" />
+                                    <span asp-validation-for="subject" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.status, new { @class = "control-label" })
+                                    <div class="input-size">
+                                        @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.status, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="description" class="control-label"></label>
+                                    <textarea asp-for="description" class="form-control"></textarea>
+                                    <span asp-validation-for="description" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="dateCreated" class="control-label"></label>
+                                    <input asp-for="dateCreated" class="form-control" disabled />
+                                    <span asp-validation-for="dateCreated" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="dateSla" class="control-label"></label>
+                                    <input asp-for="dateSla" class="form-control" />
+                                    <span asp-validation-for="dateSla" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="dateFinaly" class="control-label"></label>
+                                    <input asp-for="dateFinaly" class="form-control" disabled />
+                                    <span asp-validation-for="dateFinaly" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-success btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                        <span class="text">Salvar</span>
+                                    </button>
+
+                                    <br /><br />
+
+                                    <div>
+                                        <a asp-action="Index" class="btn btn-secondary btn-icon-split">
+                                            <span class="icon text-white-50">
+                                                <i class="fas fa-backward"></i>
+                                            </span>
+                                            <span class="text">Voltar a lista</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
     </div>
 </div>
 

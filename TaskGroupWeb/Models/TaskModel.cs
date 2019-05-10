@@ -43,5 +43,10 @@ namespace TaskGroupWeb.Models
         public DateTime dateFinaly { get; set; }
 
         public List<MessageModel> messages { get; set; }
+
+        public TaskModel()
+        {
+            messages = new List<MessageModel>();
+        }
     }
 }
