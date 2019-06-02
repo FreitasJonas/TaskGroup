@@ -6,6 +6,7 @@ namespace Objetos
     public class Project
     {
         public int projectId { get; set; }
+        public int authorId { get; set; }
         public string name { get; set; }
         public string description { get; set; }
         public string framework { get; set; }

@@ -94,9 +94,7 @@
 
     <script>
         $(document).ready(function () {
-            $("#dateSla").datepicker({
-                dateFormat: 'dd-mm-yy'
-            });
+            $("#dateSla").datepicker(getDatePickerConfiguration());
 
             $('#summer').summernote({
                 height: 200,

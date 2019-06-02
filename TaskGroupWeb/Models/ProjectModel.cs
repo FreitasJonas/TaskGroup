@@ -26,5 +26,18 @@ namespace TaskGroupWeb.Models
         public DateTime dateCreated { get; set; }
 
         public List<TaskModel> tasks { get; set; }
+
+        public List<UserSubscribe> usersSubscribe { get; set; }
+
+        public ProjectModel()
+        {
+            usersSubscribe = new List<UserSubscribe>();
+        }
+    }
+
+    public class UserSubscribe
+    {
+        public string userName { get; set; }
+        public int userId { get; set; }
     }
 }

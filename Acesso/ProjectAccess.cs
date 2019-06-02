@@ -21,10 +21,11 @@ namespace Acesso
             {
                 OpenDb();
 
-                Cmd.CommandText = "INSERT INTO projects (name, nm_desc, framework, dt_create) " +
-                    "VALUES (@name, @nm_desc, @framework, @dt_create);";
+                Cmd.CommandText = "INSERT INTO projects (id_author, name, nm_desc, framework, dt_create) " +
+                    "VALUES (@id_author, @name, @nm_desc, @framework, @dt_create);";
 
                 Cmd.Parameters.AddWithValue("name", model.name);
+                Cmd.Parameters.AddWithValue("id_author", model.authorId);
                 Cmd.Parameters.AddWithValue("nm_desc", model.description);
                 Cmd.Parameters.AddWithValue("framework", model.framework);
                 Cmd.Parameters.AddWithValue("dt_create", DateTime.Now);
@@ -119,7 +120,53 @@ namespace Acesso
                 CloseDb();
             }
         }
-        
+
+        public void InsertUserSubscribe(Project project, int userId)
+        {
+            try
+            {
+                OpenDb();
+
+                Cmd.CommandText = "INSERT INTO project_users (id_project, id_user) VALUES (@id_project, @id_user);";
+
+                Cmd.Parameters.AddWithValue("id_project", project.projectId);
+                Cmd.Parameters.AddWithValue("id_user", userId);
+
+                Cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                CloseDb();
+            }
+        }
+
+        public void DeleteUserSubscribe(Project project, int userId)
+        {
+            try
+            {
+                OpenDb();
+
+                Cmd.CommandText = "DELETE * FROM project_users where id_project = @id_project and id_user = @id_user;";
+
+                Cmd.Parameters.AddWithValue("id_project", project.projectId);
+                Cmd.Parameters.AddWithValue("id_user", userId);
+
+                Cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                CloseDb();
+            }
+        }
+
         public void Update(T model)
         {
             try

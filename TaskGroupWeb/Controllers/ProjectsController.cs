@@ -32,10 +32,15 @@ namespace TaskGroupWeb.Controllers
             _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string message = "", OperationResult result = OperationResult.Success)
         {
             try
             {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    TempData[result.ToString()] = message;
+                }                
+
                 var projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
                 return View(projects);
             }
@@ -88,24 +93,50 @@ namespace TaskGroupWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var project = _mapper.Map<Project>(projectModel);
-                    _db.DbProject.Insert(project);
+                    if (projectModel.usersSubscribe.Count > 0)
+                    {
+                        var project = _mapper.Map<Project>(projectModel);
+                        project.authorId = UserUtilities.GetUserId(User.Claims);
 
-                    TempData[OperationResult.Success.ToString()] = "Projeto salvo com sucesso!";
-                    return RedirectToAction("Index");
+                        project.projectId = _db.DbProject.Insert(project);
+
+                        foreach (var userSubscribe in projectModel.usersSubscribe)
+                        {
+                            _db.DbProject.InsertUserSubscribe(project, userSubscribe.userId);
+                        }
+
+                        return Json(new
+                        {
+                            action = Url.Action("Index", new { status = OperationResult.Success, message = "Projeto salvo com sucesso!" }),
+                            status = OperationResult.Success
+                        });
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            message = "É necessário adicionar os participantes!",
+                            status = OperationResult.Error
+                        });
+                    }                    
                 }
                 else
                 {
-                    ArrangeDropDownToCreate();
-                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
-                    return View(projectModel);
+                    return Json(new
+                    {
+                        message = "Por favor preencha todos os campos obrigatórios!",
+                        status = OperationResult.Error
+                    });
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao salvar projeto!";
-                return RedirectToAction("Index");
+                return Json(new
+                {
+                    message = "Ocorreu um erro ao salvar projeto!",
+                    status = OperationResult.Error
+                });
             }
         }
 
@@ -156,6 +187,7 @@ namespace TaskGroupWeb.Controllers
         private void ArrangeDropDownToCreate()
         {
             ViewBag.FrameWorks = HtmlDropDownHelper.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value");
+            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name");
         }
 
         private void ArrangeDropDownToEdit(ProjectModel project)

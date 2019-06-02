@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TaskGroupWeb.Models.ProjectModel>
+﻿@model TaskGroupWeb.Models.ProjectModel
 
 @{
     ViewData["Title"] = "Tarefas";
@@ -15,6 +15,7 @@
 <partial name="~/Views/Shared/_MessageResult.cshtml" />
 
 <h2>@ViewData["Title"]</h2>
+<hr />
 
 <p>
     <a asp-action="Create" class="btn btn-success btn-icon-split">
@@ -25,8 +26,6 @@
     </a>
 </p>
 
-@foreach (var item in Model)
-{
     <!-- Dropdown Card Example -->
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
@@ -34,23 +33,26 @@
             <h6 class="m-0 font-weight-bold text-primary">
                 <a href="#" class="btn btn-primary btn-sm">
                     <i class="fas fa-tasks"></i>
-                </a> @item.name ( @item.tasks.Count() )
+                </a> @Model.name ( @Model.tasks.Count() )
             </h6>
             <div class="dropdown no-arrow">
-
-                @*<a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                    </a>*@
-
-                <!-- Card Header - Accordion -->
-                <a href="#@item.name.Replace(" ", "_")" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                    @*<h6 class="m-0 font-weight-bold text-primary">Collapsable Card Example</h6>*@
+                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
                 </a>
+
+                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                    <div class="dropdown-header">Ações:</div>
+
+                    <a class="dropdown-item" href="#"><i class="fas fa-times-circle fa-sm fa-fw text-gray-400"></i> Fechar Projeto</a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#"> <i class="fas fa-code-branch fa-sm fa-fw text-gray-400"></i> Ver no Git</a>
+                </div>
 
             </div>
         </div>
 
-        <div class="collapse show" id="@item.name.Replace(" ", "_")">
+        <div class="collapse show" id="@Model.name.Replace(" ", "_")">
 
             <!-- Card Body -->
             <div class="card-body">
@@ -78,7 +80,7 @@
                         </thead>
                         <tbody>
 
-                            @foreach (var task in item.tasks)
+                            @foreach (var task in Model.tasks)
                             {
                             <tr onclick="Redirect('@Url.Action("Edit", "Tasks", new { taskId = task.taskId })')">
                                 <td>
@@ -108,7 +110,7 @@
 
     <br />
 
-}
+
 
 @section scripts {
     <script src="~/lib/DataTables/js/jquery.dataTables.js"></script>

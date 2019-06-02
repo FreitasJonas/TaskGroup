@@ -60,3 +60,12 @@ label {
 .note-toolbar.panel-heading {
     position: initial !important;
 }
+
+textarea.form-control {
+    height: 100px;
+}
+
+.bg-nav-top {
+    background-color: #f4f7ff !important;
+}
+

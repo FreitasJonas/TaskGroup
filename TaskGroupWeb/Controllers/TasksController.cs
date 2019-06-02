@@ -32,20 +32,23 @@ namespace TaskGroupWeb.Controllers
             _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int projectId)
         {
             try
             {
-                var projects = _db.DbProject.List();
-                var _projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
-
-                foreach (var project in _projects)
+                if (projectId > 0)
                 {
-                    var _tasks = _db.DbTask.ListFromProject(project.projectId);
-                    project.tasks = _mapper.Map<IList<TaskModel>>(_tasks).ToList();
-                }
+                    var projectModel = _mapper.Map<ProjectModel>(_db.DbProject.Select(projectId));
+                    var tasks = _mapper.Map<IList<TaskModel>>(_db.DbTask.ListFromProject(projectId)).ToList();
+                    projectModel.tasks = tasks;
 
-                return View(_projects);
+                    return View(projectModel);
+                }
+                else
+                {
+                    TempData[OperationResult.Success.ToString()] = "Projeto não encontrado!";
+                    return RedirectToAction("Index", "Home");
+                }
             }
             catch (Exception e)
             {
@@ -149,11 +152,21 @@ namespace TaskGroupWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var task = _mapper.Map<Task>(taskModel);
-                    _db.DbTask.Update(task);
+                    if (UserUtilities.UserIsTaskOwner(User.Claims, taskModel))
+                    {
+                        var task = _mapper.Map<Task>(taskModel);
+                        _db.DbTask.Update(task);
 
-                    TempData[OperationResult.Success.ToString()] = "Tarefa salva com sucesso!";
-                    return RedirectToAction("Index");
+                        TempData[OperationResult.Success.ToString()] = "Tarefa salva com sucesso!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        var user = _mapper.Map<UserModel>(_db.DbUser.Select(taskModel.userOwnId));
+                        ArrangeDropDownToEdit(taskModel, user);
+                        TempData[OperationResult.Error.ToString()] = "Você não possui permissão para executar esta ação!";
+                        return View(taskModel);
+                    }
                 }
                 else
                 {
@@ -180,17 +193,24 @@ namespace TaskGroupWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var message = _mapper.Map<Message>(messageModel);
-                    message.userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userId").Value);
-                    message.dateCreated = DateTime.Now;
-
-                    _db.DbMessage.Insert(message);
-
-                    return Json(new
+                    if (UserUtilities.UserIsTaskOwner(User.Claims, _db.DbTask.Select(messageModel.taskId)))
                     {
-                        action = Url.Action("Edit", "Tasks", new { taskId = messageModel.taskId, message = "Mensagem enviada com sucesso!" }),
-                        status = OperationResult.Success
-                    });
+                        var message = _mapper.Map<Message>(messageModel);
+                        message.userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userId").Value);
+                        message.dateCreated = DateTime.Now;
+
+                        _db.DbMessage.Insert(message);
+
+                        return Json(new
+                        {
+                            action = Url.Action("Edit", "Tasks", new { taskId = messageModel.taskId, message = "Mensagem enviada com sucesso!" }),
+                            status = OperationResult.Success
+                        });
+                    }
+                    else
+                    {
+                        return Json(new { status = OperationResult.Error, message = "Você não possui permissão para executar esta ação!" });
+                    }
                 }
                 else
                 {
