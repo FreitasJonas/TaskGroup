@@ -11,12 +11,12 @@
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input asp-for="projectId" class="form-control" hidden />
-            </div>
+
+    <div class="col-md-5">
+        <form asp-action="Edit" id="form-project">
+            
+            <input asp-for="projectId" class="form-control" hidden />
+            
             <div class="form-group">
                 <label asp-for="name" class="control-label"></label>
                 <input asp-for="name" class="form-control" />
@@ -53,6 +53,40 @@
 
         </form>
     </div>
+
+    <div class="col-md-5">
+
+        <div class="form-group">
+            <label class="control-label">
+                <a href="#" data-toggle="tooltip" data-placement="top" title="Usuários que participarão deste projeto!">
+                    <i class="fa fa-question faa-float animated"></i>
+                </a>
+
+                Participantes
+
+            </label>
+            <div>
+                @Html.DropDownList("usersSubscribe", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
+            </div>
+
+            <br />
+
+            <div class="_task-container">
+                <button type="submit" class="btn btn-primary btn-icon-split" id="btnAdd">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-hand-rock"></i>
+                    </span>
+                    <span class="text">Adicionar</span>
+                </button>
+            </div>
+
+            <div>
+                <br>
+                <ul id="usersSelected"></ul>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 <div>
@@ -66,6 +100,56 @@
 
 @section scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/js/Views/Projects/ProjectUsersSelect.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            let listUsers = JSON.parse('@Html.Raw(Json.Serialize(Model.users))');
+
+            listUsers.forEach((element, index) => {
+
+                addUserSelected(element.userId, element.name)
+            })
+        })
+
+        $('#form-project').submit(function (e) {
+            e.preventDefault();
+
+            let url = $(this).attr('action')
+            let data = $(this).serializeArray();
+            let usersSubscribe = [];
+
+            if ($(this).valid()) {
+
+                $('#usersSelected li').each(function (i) {
+                    usersSubscribe.push($(this).attr("data-userId"));
+                })
+
+                if (usersSubscribe.length == 0) {
+                    swal("", "É necessário selecionar os participantes do projeto!");
+                }
+                else {
+
+                    LoadingShow();
+
+                    data.push({ name: "usersSubscribeId", value: usersSubscribe.join(";") })
+
+                    submitAssync(url, data,
+                        function (response) {
+                            window.location.href = response.action
+                        },
+                        function (response) {
+                            LoadingHide();
+                            swal("", response.message)
+                        })
+                }
+            }
+        })
+        
+    </script>
+
 }
 
 

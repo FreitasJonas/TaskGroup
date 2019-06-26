@@ -5,10 +5,11 @@ namespace Acesso
 {
     public abstract class DaoMySql
     {
-        public MySqlCommand Cmd;
-        public MySqlConnection Conn;
-        public MySqlDataReader Reader;
-        public MySqlDataAdapter Adapter;
+        protected MySqlCommand Cmd;
+        protected MySqlConnection Conn;
+        protected MySqlDataReader Reader;
+        protected MySqlDataAdapter Adapter;
+        protected MySqlTransaction Transaction;
 
         public DaoMySql(string strConnection)
         {

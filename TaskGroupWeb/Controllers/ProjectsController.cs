@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using TaskGroupWeb.Helpers;
 using TaskGroupWeb.Models;
+using System.Linq;
 
 namespace TaskGroupWeb.Controllers
 {
@@ -32,6 +33,8 @@ namespace TaskGroupWeb.Controllers
             _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
+        #region - GET - 
+
         public IActionResult Index(string message = "", OperationResult result = OperationResult.Success)
         {
             try
@@ -39,7 +42,7 @@ namespace TaskGroupWeb.Controllers
                 if (!string.IsNullOrEmpty(message))
                 {
                     TempData[result.ToString()] = message;
-                }                
+                }
 
                 var projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
                 return View(projects);
@@ -73,6 +76,7 @@ namespace TaskGroupWeb.Controllers
             {
                 var project = _db.DbProject.Select(projectId);
                 var projectModel = _mapper.Map<ProjectModel>(project);
+                projectModel.users = _mapper.Map<IList<User>, IList <UserModel>>(_db.DbProject.ListUsers(project.projectId)).ToList();
 
                 ArrangeDropDownToEdit(projectModel);
                 return View(projectModel);
@@ -85,6 +89,10 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
+        #endregion
+
+        #region - POST -
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(ProjectModel projectModel)
@@ -93,16 +101,18 @@ namespace TaskGroupWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (projectModel.usersSubscribe.Count > 0)
+                    var users = projectModel.usersSubscribeId.Split(";");
+
+                    if (users.Length > 0)
                     {
                         var project = _mapper.Map<Project>(projectModel);
                         project.authorId = UserUtilities.GetUserId(User.Claims);
 
                         project.projectId = _db.DbProject.Insert(project);
 
-                        foreach (var userSubscribe in projectModel.usersSubscribe)
+                        foreach (var userSubscribeId in users)
                         {
-                            _db.DbProject.InsertUserSubscribe(project, userSubscribe.userId);
+                            _db.DbProject.InsertUserSubscribe(project, int.Parse(userSubscribeId));
                         }
 
                         return Json(new
@@ -118,7 +128,7 @@ namespace TaskGroupWeb.Controllers
                             message = "É necessário adicionar os participantes!",
                             status = OperationResult.Error
                         });
-                    }                    
+                    }
                 }
                 else
                 {
@@ -148,17 +158,41 @@ namespace TaskGroupWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var project = _mapper.Map<Project>(projectModel);
-                    _db.DbProject.Update(project);
+                    var users = projectModel.usersSubscribeId.Split(";");
 
-                    TempData[OperationResult.Success.ToString()] = "Projeto salvo com sucesso!";
-                    return RedirectToAction("Index");
+                    if (users.Length > 0)
+                    {
+                        var project = _mapper.Map<Project>(projectModel);
+                        _db.DbProject.Update(project);
+                        _db.DbProject.UpdateUsers(project.projectId, users);
+
+                        return Json(new
+                        {
+                            action = Url.Action("Index", 
+                            new {
+                                message = "Projeto salvo com sucesso!",
+                                status = OperationResult.Success
+                            }),
+                            status = OperationResult.Success
+                        });
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            message = "O projeto deve conter no mínimo um participante!",
+                            status = OperationResult.Error
+                        });
+                    }                    
                 }
                 else
                 {
                     ArrangeDropDownToEdit(projectModel);
-                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
-                    return View(projectModel);
+                    return Json(new
+                    {
+                        message = "Por favor preencha todos os campos obrigatórios!",
+                        status = OperationResult.Error
+                    });
                 }
             }
             catch (Exception e)
@@ -167,8 +201,11 @@ namespace TaskGroupWeb.Controllers
                 TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projeto!";
                 return RedirectToAction("Index");
             }
-
         }
+
+        #endregion
+
+        #region - UTILS -
 
         public IActionResult GetProjects()
         {
@@ -193,6 +230,9 @@ namespace TaskGroupWeb.Controllers
         private void ArrangeDropDownToEdit(ProjectModel project)
         {
             ViewBag.FrameWorks = HtmlDropDownHelper.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value", project.framework);
+            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name");
         }
+
+        #endregion
     }
 }

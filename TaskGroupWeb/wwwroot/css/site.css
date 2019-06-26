@@ -69,3 +69,26 @@ textarea.form-control {
     background-color: #f4f7ff !important;
 }
 
+._task-container {
+    display: flex;
+    justify-content: flex-end !important;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.modal-loading {
+    display: block;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba( 255, 255, 255, .4 ) url('/images/loading.gif') 50% 50% no-repeat;
+}
+
+

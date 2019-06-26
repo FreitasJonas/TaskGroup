@@ -14,7 +14,11 @@ function submitAssync(url, data, sucesso, falha) {
             else {
                 falha(response);
             }
-        }
+        },
+        error: function (error) {
+            let response = { message: "Ocorreu um erro ao realizar a requisição [" + error + "]" };
+            falha(response);
+        }        
     })
 }
 
@@ -46,4 +50,12 @@ function getDatePickerConfiguration() {
         nextText: 'Próximo',
         prevText: 'Anterior'
     }
+}
+
+function LoadingShow() {
+    $(".modal-loading").show();
+}
+
+function LoadingHide() {
+    $(".modal-loading").hide();
 }

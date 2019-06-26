@@ -27,17 +27,8 @@ namespace TaskGroupWeb.Models
 
         public List<TaskModel> tasks { get; set; }
 
-        public List<UserSubscribe> usersSubscribe { get; set; }
+        public List<UserModel> users { get; set; }
 
-        public ProjectModel()
-        {
-            usersSubscribe = new List<UserSubscribe>();
-        }
-    }
-
-    public class UserSubscribe
-    {
-        public string userName { get; set; }
-        public int userId { get; set; }
+        public string usersSubscribeId { get; set; }
     }
 }

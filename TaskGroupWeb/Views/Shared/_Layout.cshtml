@@ -11,11 +11,15 @@
     <link rel="stylesheet" href="~/lib/sb-admin/css/sb-admin-2.css" />
     <link rel="stylesheet" href="~/css/font-awesome-animation.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    
+    <link rel="stylesheet" href="~/css/SweetAlert/swalExtend.css" />
+    <link rel="stylesheet" href="~/css/SweetAlert/sweetalert.css" />
+
     @RenderSection("css", required: false)
 </head>
 
 <body id="page-top">
+
+    <div class="modal-loading"></div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -45,11 +49,11 @@
             </div>
 
             @*<li class="nav-item">
-                <a asp-area="" class="nav-link" asp-controller="Tasks" asp-action="Index">
-                    <i class="fas fa-fw fa-tasks"></i>
-                    <span>Tarefas</span>
-                </a>
-            </li>*@
+                    <a asp-area="" class="nav-link" asp-controller="Tasks" asp-action="Index">
+                        <i class="fas fa-fw fa-tasks"></i>
+                        <span>Tarefas</span>
+                    </a>
+                </li>*@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item active">
@@ -207,10 +211,14 @@
     <script src="~/lib/sb-admin/vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="~/lib/sb-admin/js/sb-admin-2.min.js"></script>
     <script src="~/js/site.js"></script>
+    <script src="~/lib/SweetAlert/swalExtend.js"></script>
+    <script src="~/lib/SweetAlert/sweetalert.js"></script>
 
     <script>
 
         $(document).ready(function () {
+
+            LoadingHide();
 
             submitAssync('@Url.Action("GetProjects", "Projects")', null,
                 function (response) {

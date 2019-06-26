@@ -191,5 +191,87 @@ namespace Acesso
                 CloseDb();
             }
         }
+
+        public void UpdateUsers(int projectId, params object[] users)
+        {
+            try
+            {
+                OpenDb();
+                Transaction = Conn.BeginTransaction();
+                Cmd.Parameters.AddWithValue("id_project", projectId);
+
+                #region - Delete -
+
+                Cmd.CommandText = "delete from project_users where id_project = @id_project";                
+
+                Cmd.ExecuteNonQuery();
+
+                #endregion
+                
+                #region - Insert -
+
+                var query = "";
+
+                for (int i = 0; i < users.Length; i++)
+                {
+                    query += string.Format("INSERT INTO project_users (id_project, id_user) VALUES (@id_project, @id_user_{0});", i);
+                    Cmd.Parameters.AddWithValue("id_user_" + i, users[i].ToString());
+                }
+
+                Cmd.CommandText = query;
+                Cmd.ExecuteNonQuery();
+
+                #endregion
+
+                Transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                Transaction.Rollback();
+                throw e;
+            }
+            finally
+            {
+                CloseDb();
+            }
+        }
+
+        public List<User> ListUsers(int projectId)
+        {
+            try
+            {
+                OpenDb();
+
+                var users = new List<User>();
+
+                Cmd.CommandText = @"select * from users u inner join project_users p on p.id_user = u.id_user where p.id_project = @id_project;";
+                Cmd.Parameters.AddWithValue("id_project", projectId);
+
+                Reader = Cmd.ExecuteReader();
+
+                while (Reader.Read())
+                {
+                    var _user = new User();
+
+                    _user.userId = Reader.GetInt32("id_user");
+                    _user.login = Reader.GetString("login");
+                    _user.name = Reader.GetString("name");
+                    _user.contact = Reader.GetString("contact");
+                    _user.dateCreated = Reader.GetDateTime("dt_create");
+
+                    users.Add(_user);
+                }
+
+                return users;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                CloseDb();
+            }
+        }
     }
 }
