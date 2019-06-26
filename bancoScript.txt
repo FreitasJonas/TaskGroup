@@ -21,6 +21,7 @@ USE `taskdb`;
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE IF NOT EXISTS `messages` (
   `id_message` int(11) NOT NULL,
+  `id_task` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `message` text NOT NULL,
   `dt_create` datetime NOT NULL,
@@ -62,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   CONSTRAINT `project_user_author` FOREIGN KEY (`id_author`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.projects: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.projects: ~3 rows (aproximadamente)
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
 INSERT INTO `projects` (`id_project`, `id_author`, `name`, `nm_desc`, `framework`, `dt_create`) VALUES
 	(31, 1, 'TaskGroup', 'Teste', 'Asp.Net Core C#', '2019-06-26 11:53:46'),
@@ -81,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `project_users` (
   CONSTRAINT `user_projects` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.project_users: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.project_users: ~4 rows (aproximadamente)
 /*!40000 ALTER TABLE `project_users` DISABLE KEYS */;
 INSERT INTO `project_users` (`id_project`, `id_user`) VALUES
 	(31, 1),
@@ -104,10 +105,14 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `dt_sla` datetime DEFAULT NULL,
   `dt_finaly` datetime DEFAULT NULL,
   PRIMARY KEY (`id_task`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.tasks: 0 rows
+-- Copiando dados para a tabela taskdb.tasks: 3 rows
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
+INSERT INTO `tasks` (`id_task`, `id_project`, `cod_task`, `user_own`, `subject`, `description`, `status`, `dt_create`, `dt_sla`, `dt_finaly`) VALUES
+	(15, 31, '2019-6-00015', 9, 'teste', 'teste', 1, '2019-06-26 14:31:22', '2019-06-28 00:00:00', '0001-01-01 00:00:00'),
+	(13, 31, '2019-6-00013', 9, 'teste', 'teste', 1, '2019-06-26 14:21:45', '2019-06-28 00:00:00', '0001-01-01 00:00:00'),
+	(14, 31, '2019-6-00014', 1, 'teste', 'Teste', 1, '2019-06-26 14:27:54', '2019-06-28 00:00:00', '0001-01-01 00:00:00');
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.users
@@ -124,11 +129,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `senha` (`pass`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.users: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.users: ~2 rows (aproximadamente)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id_user`, `login`, `pass`, `name`, `contact`, `dt_create`) VALUES
 	(1, 'jonascontato15@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Azevedo', '11955572997', '2019-05-03 09:35:35'),
-	(9, 'jonascontato156@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Teste', '955572997', '2019-06-26 11:52:48');
+	(9, 'jonascontato156@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Teste', '11955572997', '2019-06-26 11:52:48');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

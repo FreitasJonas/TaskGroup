@@ -72,20 +72,20 @@ namespace TaskGroupWeb.Helpers
 
             var enumValues = Enum.GetValues(enumerationType);
 
-            //if (topValue < enumValues.Length)
-            //{
-            //    var topText = enumValues.GetValue(topValue);
+            if (topValue <= enumValues.Length)
+            {
+                var topText = enumValues.GetValue(topValue - 1);
 
-            //    selectList.Add(new SelectListItem()
-            //    {
-            //        Text = topText.ToString(),
-            //        Value = topValue.ToString()
-            //    });
-            //}
+                selectList.Add(new SelectListItem()
+                {
+                    Text = topText.ToString(),
+                    Value = topValue.ToString()
+                });
+            }
 
             foreach (int value in enumValues)
             {
-                //if (value == topValue) { continue; }
+                if (value == topValue) { continue; }
 
                 var name = Enum.GetName(enumerationType, value);
 

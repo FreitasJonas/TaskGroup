@@ -207,6 +207,10 @@
     </div>
 
     <script src="~/lib/sb-admin/vendor/jquery/jquery.js"></script>
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
     <script src="~/lib/sb-admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/sb-admin/vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="~/lib/sb-admin/js/sb-admin-2.min.js"></script>
@@ -226,7 +230,7 @@
                     response.projects.forEach((project, index) => {
 
                         let url = '@Url.Action("Index", "Tasks")';
-                        let html = `<a class="collapse-item" href="${url}?projectId=${project.projectId}">${project.name} </a>`;
+                        let html = `<a class="collapse-item project-item project_${project.projectId}" href="${url}?projectId=${project.projectId}">${project.name} </a>`;
                         $('#list-projects').append(html);
                     })
                 },

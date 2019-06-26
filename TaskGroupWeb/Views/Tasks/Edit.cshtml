@@ -55,8 +55,6 @@
         <div class="row">
             <div class="col-md-9">
 
-
-
                 @if (UserUtilities.UserIsTaskOwner(User.Claims, Model))
                 {
                     <div class="form-group">
@@ -131,7 +129,7 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="taskCode" class="control-label"></label>
-                                <input asp-for="taskCode" class="form-control" disabled />
+                                <input asp-for="taskCode" class="form-control" readonly />
                                 <span asp-validation-for="taskCode" class="text-danger"></span>
                             </div>
 
@@ -145,7 +143,7 @@
 
                             <div class="form-group">
                                 <label asp-for="subject" class="control-label"></label>
-                                <input asp-for="subject" class="form-control" disabled />
+                                <input asp-for="subject" class="form-control" readonly />
                                 <span asp-validation-for="subject" class="text-danger"></span>
                             </div>
 
@@ -159,7 +157,7 @@
 
                             <div class="form-group">
                                 <label asp-for="description" class="control-label"></label>
-                                <textarea asp-for="description" class="form-control" disabled></textarea>
+                                <textarea asp-for="description" class="form-control" readonly></textarea>
                                 <span asp-validation-for="description" class="text-danger"></span>
                             </div>
 
@@ -171,13 +169,13 @@
 
                             <div class="form-group">
                                 <label asp-for="dateCreated" class="control-label"></label>
-                                <input asp-for="dateCreated" class="form-control" disabled />
+                                <input asp-for="dateCreated" class="form-control" readonly />
                                 <span asp-validation-for="dateCreated" class="text-danger"></span>
                             </div>
 
                             <div class="form-group">
                                 <label asp-for="dateFinaly" class="control-label"></label>
-                                <input asp-for="dateFinaly" class="form-control" disabled />
+                                <input asp-for="dateFinaly" class="form-control" readonly />
                                 <span asp-validation-for="dateFinaly" class="text-danger"></span>
                             </div>
 
@@ -192,7 +190,7 @@
                                 <br /><br />
 
                                 <div>
-                                    <a asp-action="Index" class="btn btn-secondary btn-icon-split">
+                                    <a asp-action="Index" asp-route-projectId="@Model.projectId" class="btn btn-secondary btn-icon-split">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-backward"></i>
                                         </span>
@@ -244,7 +242,6 @@
 </div>
 
 @section scripts{
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/summer/summernote.js"></script>
     <script src="~/lib/jquery-ui-1.12.1/jquery-ui.js"></script>
 
@@ -256,11 +253,42 @@
             if (isOwn == "False") {
                 $('#form-task :input').attr('disabled', true)
             }
+
+            $("#dateSla").datepicker(getDatePickerConfiguration());
+
+            $('#summer').summernote({
+                height: 200,
+                popover: {
+                    image: [],
+                    link: [],
+                    air: []
+                }
+            });
         })
 
-    </script>
+        $('#form-task').submit(function (e) {
 
-    <script>
+            e.preventDefault();
+
+            var url = $(this).attr("action");
+            let data = $(this).serializeArray();
+
+            if($(this).valid()) {
+                submitAssync(url, data,
+                function (response) {
+                    console.log(response)
+                    window.location.href = response.action
+                },
+                function (response) {
+                    console.log(response)
+                    $('#alert-message').attr('hidden', false)
+                    $('#alert-message-text').text(response.message);
+                })
+            }
+            else {
+                swal("", "Por favor preencha todos os campos obrigatórios!");
+            }
+        })
 
         $('#form-message').submit(function (e) {
             e.preventDefault();
@@ -289,21 +317,6 @@
             $('#alert-message').attr('hidden', true)
         })
 
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $("#dateSla").datepicker(getDatePickerConfiguration());
-            
-            $('#summer').summernote({
-                height: 200,
-                popover: {
-                    image: [],
-                    link: [],
-                    air: []
-                }
-            });
-        })
     </script>
 }
 

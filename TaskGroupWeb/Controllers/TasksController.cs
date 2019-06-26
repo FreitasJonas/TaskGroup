@@ -32,6 +32,8 @@ namespace TaskGroupWeb.Controllers
             _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
+        #region - GET -
+
         public IActionResult Index(int projectId)
         {
             try
@@ -46,7 +48,7 @@ namespace TaskGroupWeb.Controllers
                 }
                 else
                 {
-                    TempData[OperationResult.Success.ToString()] = "Projeto não encontrado!";
+                    TempData[OperationResult.Error.ToString()] = "Projeto não encontrado!";
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -58,12 +60,15 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
-        public IActionResult Create()
+        public IActionResult Create(int projectId)
         {
             try
             {
+                TaskModel taskModel = new TaskModel();
+                taskModel.projectId = projectId;
+
                 ArrangeDropDownToCreate();
-                return View();
+                return View(taskModel);
             }
             catch (Exception e)
             {
@@ -111,6 +116,10 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
+        #endregion
+
+        #region - POST -
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(TaskModel taskModel)
@@ -127,7 +136,7 @@ namespace TaskGroupWeb.Controllers
                     _db.DbTask.Update(task);
 
                     TempData[OperationResult.Success.ToString()] = "Tarefa salva com sucesso!";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", new { projectId = task.projectId });
                 }
                 else
                 {
@@ -157,32 +166,40 @@ namespace TaskGroupWeb.Controllers
                         var task = _mapper.Map<Task>(taskModel);
                         _db.DbTask.Update(task);
 
-                        TempData[OperationResult.Success.ToString()] = "Tarefa salva com sucesso!";
-                        return RedirectToAction("Index");
+                        return Json(new
+                        {
+                            action = Url.Action("Edit", "Tasks", new { taskId = task.taskId, message = "Tarefa salva com sucesso!" }),
+                            status = OperationResult.Success
+                        });
                     }
                     else
                     {
-                        var user = _mapper.Map<UserModel>(_db.DbUser.Select(taskModel.userOwnId));
-                        ArrangeDropDownToEdit(taskModel, user);
-                        TempData[OperationResult.Error.ToString()] = "Você não possui permissão para executar esta ação!";
-                        return View(taskModel);
+                        return Json(new
+                        {
+                            message = "Você não possui permissão para executar esta ação!",
+                            status = OperationResult.Error
+                        });
                     }
                 }
                 else
                 {
-                    var user = _mapper.Map<UserModel>(_db.DbUser.Select(taskModel.userOwnId));
-                    ArrangeDropDownToEdit(taskModel, user);
-                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
-                    return View(taskModel);
+                    return Json(new
+                    {
+                        message = "Por favor preencha todos os campos obrigatórios!",
+                        status = OperationResult.Error
+                    });
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar tarefa!";
-                return RedirectToAction("Index");
-            }
 
+                return Json(new
+                {
+                    message = "Ocorreu um erro ao carregar tarefa!",
+                    status = OperationResult.Error
+                });
+            }
         }
 
         [HttpPost]
@@ -214,7 +231,7 @@ namespace TaskGroupWeb.Controllers
                 }
                 else
                 {
-                    return Json(new { status = OperationResult.Error, message = "Por favor preencha todos os campos obrigatórios!" }); 
+                    return Json(new { status = OperationResult.Error, message = "Por favor preencha todos os campos obrigatórios!" });
                 }
             }
             catch (Exception e)
@@ -223,6 +240,10 @@ namespace TaskGroupWeb.Controllers
                 return Json(new { status = OperationResult.Error, message = "Ocorreu um erro ao enviar mensagem!" });
             }
         }
+
+        #endregion
+
+        #region - UTILS -
 
         private void ArrangeDropDownToCreate()
         {
@@ -236,5 +257,7 @@ namespace TaskGroupWeb.Controllers
             ViewBag.Status = HtmlDropDownHelper.GetDropDownFromEnum<TaskStatus>((int)task.status);
             ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name", user.name);
         }
+
+        #endregion
     }
 }

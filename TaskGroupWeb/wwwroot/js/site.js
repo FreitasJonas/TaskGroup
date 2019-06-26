@@ -59,3 +59,16 @@ function LoadingShow() {
 function LoadingHide() {
     $(".modal-loading").hide();
 }
+
+function ActiveProjectMenu(projectId) {
+
+    console.log(projectId)
+
+    let items = $('.project-item');
+    for (let i = 0; i < items.length; i++) {
+
+        $(items[i]).removeClass('active');
+    }
+
+    $('.project_' + projectId).addClass('active');
+}
