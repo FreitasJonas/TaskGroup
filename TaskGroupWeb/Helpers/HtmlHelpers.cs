@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Objetos.DbEnumerators;
 
 namespace TaskGroupWeb.Helpers
 {
-    public class HtmlDropDownHelper
+    public class HtmlHelpers
     {
         public static SelectList GetDropDownList<T>(List<T> sourceList, string propValue, string propText, string firstValue = "")
         {
@@ -103,6 +104,67 @@ namespace TaskGroupWeb.Helpers
             );
 
             return retorno;
+        }
+
+        public static string GetBreadCrumb(params BreadCrumbItem[] items)
+        {
+            var html = "<ul class=\"breadcrumb\">";
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (i == items.Length - 1)
+                {
+                    //ultimo
+                    html += "<li><a href=\"" + items[i].link + "\">" + items[i].title + "</a> </li>";
+                }
+                else
+                {
+                    html += "<li><a href=\"" + items[i].link + "\" > " + items[i].title + "</a> &nbsp;&nbsp; \\  &nbsp;&nbsp; </li>";
+                }                
+            }
+            
+            html += "</ul>";
+            return html;
+        }
+
+        public static string GetColorToStatus(TaskStatus status)
+        {
+            switch (status)
+            {
+                case TaskStatus.Aberto:
+                    return "#787878";
+                case TaskStatus.Andamento:
+                    return "#8f8f00";
+                case TaskStatus.Finalizado:
+                    return "#2b8f00";
+                default: return status.ToString();
+            }
+        }
+
+        public static string GetIconToStatus(TaskStatus status)
+        {
+            switch (status)
+            {
+                case TaskStatus.Aberto:
+                    return "envelope";
+                case TaskStatus.Andamento:
+                    return "running";
+                case TaskStatus.Finalizado:
+                    return "check";
+                default: return status.ToString();
+            }
+        }
+    }
+
+    public class BreadCrumbItem
+    {
+        public string title;
+        public string link;
+
+        public BreadCrumbItem(string _title, string _link)
+        {
+            this.title = _title;
+            this.link = _link;
         }
     }
 }

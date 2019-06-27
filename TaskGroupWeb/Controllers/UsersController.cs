@@ -47,10 +47,16 @@ namespace TaskGroupWeb.Controllers
             }            
         }
 
-        public IActionResult Edit(int idUser)
+        public IActionResult Edit(string userId)
         {
             try
             {
+                #region - Decrypt -
+
+                var idUser = userId.DecryptUrl();
+
+                #endregion
+
                 var user = _db.DbUser.Select(idUser);
                 return View(_mapper.Map<UserModel>(user));
             }

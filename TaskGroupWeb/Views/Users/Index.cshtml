@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<TaskGroupWeb.Models.UserModel>
+@using TaskGroupWeb.Helpers
 
 @{
     ViewData["Title"] = "Usuários";
@@ -48,7 +49,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr onclick="Redirect('@Url.Action("Edit", new { idUser = item.userId })')">
+            <tr onclick="Redirect('@Url.Action("Edit", new { userId = item.userId.EncryptUrl() })')">
                 <td>
                     @Html.DisplayFor(modelItem => item.userId)
                 </td>

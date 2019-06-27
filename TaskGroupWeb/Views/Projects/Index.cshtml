@@ -49,7 +49,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr onclick="Redirect('@Url.Action("Edit", new { projectId = item.projectId })')">
+            <tr onclick="Redirect('@Url.Action("Edit", new { _projectId = item.projectId.EncryptUrl() })')">
                 <td>
                     @Html.DisplayFor(modelItem => item.projectId)
                 </td>

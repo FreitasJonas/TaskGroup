@@ -1,5 +1,4 @@
-﻿
-@using TaskGroupWeb.Helpers
+﻿@using TaskGroupWeb.Helpers
 @model TaskGroupWeb.Models.TaskModel
 
 @{
@@ -13,8 +12,7 @@
 }
 
 <partial name="~/Views/Shared/_MessageResult.cshtml" />
-
-<h2>@ViewData["Title"] - @Model.taskCode</h2>
+<partial name="~/Views/Shared/_BreadCrumb.cshtml" />
 
 <hr />
 
@@ -190,7 +188,7 @@
                                 <br /><br />
 
                                 <div>
-                                    <a asp-action="Index" asp-route-projectId="@Model.projectId" class="btn btn-secondary btn-icon-split">
+                                    <a asp-action="Index" asp-route-_projectId="@Model.projectId.EncryptUrl()" class="btn btn-secondary btn-icon-split">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-backward"></i>
                                         </span>
@@ -255,6 +253,7 @@
             }
 
             $("#dateSla").datepicker(getDatePickerConfiguration());
+            //$("#dateSla").datepicker('setDate', new Date());
 
             $('#summer').summernote({
                 height: 200,

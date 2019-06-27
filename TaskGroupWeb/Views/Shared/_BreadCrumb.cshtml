@@ -1,0 +1,6 @@
+﻿@if (TempData["breadcrumb"] != null)
+{
+    <div>
+        @Html.Raw(TempData["breadcrumb"].ToString())
+    </div>
+}

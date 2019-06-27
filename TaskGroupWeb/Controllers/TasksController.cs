@@ -34,16 +34,24 @@ namespace TaskGroupWeb.Controllers
 
         #region - GET -
 
-        public IActionResult Index(int projectId)
+        public IActionResult Index(string _projectId)
         {
             try
             {
+                #region - Decrypt -
+
+                var projectId = int.Parse(_projectId.DecryptUrl());
+
+                #endregion
+
                 if (projectId > 0)
                 {
                     var projectModel = _mapper.Map<ProjectModel>(_db.DbProject.Select(projectId));
                     var tasks = _mapper.Map<IList<TaskModel>>(_db.DbTask.ListFromProject(projectId)).ToList();
+
                     projectModel.tasks = tasks;
 
+                    MakeBreadCrumbToIndexView(projectModel);
                     return View(projectModel);
                 }
                 else
@@ -60,13 +68,20 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
-        public IActionResult Create(int projectId)
+        public IActionResult Create(string _projectId)
         {
             try
             {
+                #region - Decrypt -
+
+                var projectId = int.Parse(_projectId.DecryptUrl());
+
+                #endregion
+
                 TaskModel taskModel = new TaskModel();
                 taskModel.projectId = projectId;
 
+                MakeBreadCrumbToCreateView(_mapper.Map<Project, ProjectModel>(_db.DbProject.Select(taskModel.projectId)));
                 ArrangeDropDownToCreate();
                 return View(taskModel);
             }
@@ -78,10 +93,16 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
-        public IActionResult Edit(int taskId, string message = "")
+        public IActionResult Edit(string _taskId, string message = "")
         {
             try
             {
+                #region - Decrypt -
+
+                var taskId = int.Parse(_taskId.DecryptUrl());
+
+                #endregion
+
                 #region prepare data
 
                 var task = _db.DbTask.Select(taskId);
@@ -106,6 +127,7 @@ namespace TaskGroupWeb.Controllers
                     TempData[OperationResult.Success.ToString()] = message;
                 }
 
+                MakeBreadCrumbToEditView(_mapper.Map<Project, ProjectModel>(_db.DbProject.Select(taskModel.projectId)), taskModel);
                 return View(taskModel);
             }
             catch (Exception e)
@@ -135,21 +157,30 @@ namespace TaskGroupWeb.Controllers
 
                     _db.DbTask.Update(task);
 
-                    TempData[OperationResult.Success.ToString()] = "Tarefa salva com sucesso!";
-                    return RedirectToAction("Index", new { projectId = task.projectId });
+                    return Json(new
+                    {
+                        action = Url.Action("Index", new { _projectId = task.projectId.EncryptUrl() }),
+                        status = OperationResult.Success
+                    });
                 }
                 else
                 {
-                    ArrangeDropDownToCreate();
-                    TempData[OperationResult.Error.ToString()] = "Por favor preencha todos os campos obrigatórios!";
-                    return View(taskModel);
+                    return Json(new
+                    {
+                        message = "Por favor preencha todos os campos obrigatórios!",
+                        status = OperationResult.Error
+                    });
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao salvar tarefa!";
-                return RedirectToAction("Index");
+                
+                return Json(new
+                {
+                    message = "Ocorreu um erro ao salvar tarefa!",
+                    status = OperationResult.Error
+                });
             }
         }
 
@@ -168,7 +199,7 @@ namespace TaskGroupWeb.Controllers
 
                         return Json(new
                         {
-                            action = Url.Action("Edit", "Tasks", new { taskId = task.taskId, message = "Tarefa salva com sucesso!" }),
+                            action = Url.Action("Edit", "Tasks", new { _taskId = task.taskId.EncryptUrl(), message = "Tarefa salva com sucesso!" }),
                             status = OperationResult.Success
                         });
                     }
@@ -220,7 +251,7 @@ namespace TaskGroupWeb.Controllers
 
                         return Json(new
                         {
-                            action = Url.Action("Edit", "Tasks", new { taskId = messageModel.taskId, message = "Mensagem enviada com sucesso!" }),
+                            action = Url.Action("Edit", "Tasks", new { _taskId = messageModel.taskId.EncryptUrl(), message = "Mensagem enviada com sucesso!" }),
                             status = OperationResult.Success
                         });
                     }
@@ -247,15 +278,39 @@ namespace TaskGroupWeb.Controllers
 
         private void ArrangeDropDownToCreate()
         {
-            ViewBag.Status = HtmlDropDownHelper.GetDropDownFromEnum<TaskStatus>((int)TaskStatus.Aberto);
-            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name");
-            ViewBag.Projects = HtmlDropDownHelper.GetDropDownList(_db.DbProject.List(), "projectId", "name");
+            ViewBag.Status = HtmlHelpers.GetDropDownFromEnum<TaskStatus>((int)TaskStatus.Aberto);
+            ViewBag.Users = HtmlHelpers.GetDropDownList(_db.DbUser.List(), "userId", "name");
+            ViewBag.Projects = HtmlHelpers.GetDropDownList(_db.DbProject.List(), "projectId", "name");
         }
 
         private void ArrangeDropDownToEdit(TaskModel task, UserModel user)
         {
-            ViewBag.Status = HtmlDropDownHelper.GetDropDownFromEnum<TaskStatus>((int)task.status);
-            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name", user.name);
+            ViewBag.Status = HtmlHelpers.GetDropDownFromEnum<TaskStatus>((int)task.status);
+            ViewBag.Users = HtmlHelpers.GetDropDownList(_db.DbUser.List(), "userId", "name", user.name);
+        }
+
+        private void MakeBreadCrumbToIndexView(ProjectModel project)
+        {
+            var item1 = new BreadCrumbItem(project.name, Url.Action("Index", new { _projectId = project.projectId.EncryptUrl() }));
+            var item2 = new BreadCrumbItem("Tarefas", "#");
+
+            TempData["breadcrumb"] = HtmlHelpers.GetBreadCrumb(item1, item2);
+        }
+
+        private void MakeBreadCrumbToCreateView(ProjectModel project)
+        {
+            var item1 = new BreadCrumbItem(project.name, Url.Action("Index", new { _projectId = project.projectId.EncryptUrl() }));
+            var item2 = new BreadCrumbItem("Nova Tarefa", "#");
+
+            TempData["breadcrumb"] = HtmlHelpers.GetBreadCrumb(item1, item2);
+        }
+
+        private void MakeBreadCrumbToEditView(ProjectModel project, TaskModel task)
+        {
+            var item1 = new BreadCrumbItem(project.name, Url.Action("Index", new { _projectId = project.projectId.EncryptUrl() }));
+            var item2 = new BreadCrumbItem(task.taskCode, Url.Action("Edit", new { _taskId = task.taskId.EncryptUrl() }));
+
+            TempData["breadcrumb"] = HtmlHelpers.GetBreadCrumb(item1, item2);
         }
 
         #endregion

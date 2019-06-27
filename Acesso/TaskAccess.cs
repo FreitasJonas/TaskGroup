@@ -63,7 +63,7 @@ namespace Acesso
 
                 var list = new List<Task>();
 
-                Cmd.CommandText = "select * from tasks where id_project = @id_project;";
+                Cmd.CommandText = @"select * from tasks t inner join users u on t.user_own = u.id_user where id_project = @id_project;";
                 Cmd.Parameters.AddWithValue("id_project", projectId);
 
                 Reader = Cmd.ExecuteReader();
@@ -82,6 +82,12 @@ namespace Acesso
                     _task.dateCreated = Reader.GetDateTime("dt_create");
                     _task.dateSla = Reader.GetDateTime("dt_sla");
                     _task.dateFinaly = Reader.GetDateTime("dt_finaly");
+
+                    _task.userOwn.userId = Reader.GetInt32("id_user");
+                    _task.userOwn.login = Reader.GetString("login");
+                    _task.userOwn.name = Reader.GetString("name");
+                    _task.userOwn.contact = Reader.GetString("contact");
+                    _task.userOwn.dateCreated = Reader.GetDateTime("dt_create");
 
                     list.Add(_task);
                 }

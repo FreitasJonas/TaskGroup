@@ -91,4 +91,9 @@ textarea.form-control {
     background: rgba( 255, 255, 255, .4 ) url('/images/loading.gif') 50% 50% no-repeat;
 }
 
+.bg-status {
+    padding: 5px;
+    border-radius: 5px;
+}
+
 

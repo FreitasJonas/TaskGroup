@@ -7,9 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Objetos;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TaskGroupWeb.Helpers;
 using TaskGroupWeb.Models;
-using System.Linq;
 
 namespace TaskGroupWeb.Controllers
 {
@@ -70,10 +70,16 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
-        public IActionResult Edit(int projectId)
+        public IActionResult Edit(string _projectId)
         {
             try
             {
+                #region MyRegion
+
+                var projectId = _projectId.DecryptUrl();
+
+                #endregion
+
                 var project = _db.DbProject.Select(projectId);
                 var projectModel = _mapper.Map<ProjectModel>(project);
                 projectModel.users = _mapper.Map<IList<User>, IList <UserModel>>(_db.DbProject.ListUsers(project.projectId)).ToList();
@@ -212,7 +218,21 @@ namespace TaskGroupWeb.Controllers
             try
             {
                 var _projects = _db.DbProject.List();
-                return Json(new { status = OperationResult.Success, projects = _projects });
+
+                var listObj = new List<object>();
+
+                foreach (var p in _projects)
+                {
+                    var _p = new
+                    {
+                        _projectId = p.projectId.EncryptUrl(),
+                        name = p.name
+                    };
+
+                    listObj.Add(_p);
+                }
+
+                return Json(new { status = OperationResult.Success, projects = listObj });
             }
             catch (Exception e)
             {
@@ -223,14 +243,14 @@ namespace TaskGroupWeb.Controllers
 
         private void ArrangeDropDownToCreate()
         {
-            ViewBag.FrameWorks = HtmlDropDownHelper.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value");
-            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name");
+            ViewBag.FrameWorks = HtmlHelpers.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value");
+            ViewBag.Users = HtmlHelpers.GetDropDownList(_db.DbUser.List(), "userId", "name");
         }
 
         private void ArrangeDropDownToEdit(ProjectModel project)
         {
-            ViewBag.FrameWorks = HtmlDropDownHelper.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value", project.framework);
-            ViewBag.Users = HtmlDropDownHelper.GetDropDownList(_db.DbUser.List(), "userId", "name");
+            ViewBag.FrameWorks = HtmlHelpers.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value", project.framework);
+            ViewBag.Users = HtmlHelpers.GetDropDownList(_db.DbUser.List(), "userId", "name");
         }
 
         #endregion

@@ -49,7 +49,7 @@ function getDatePickerConfiguration() {
         monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
         nextText: 'Próximo',
         prevText: 'Anterior'
-    }
+    };
 }
 
 function LoadingShow() {

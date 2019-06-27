@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Objetos;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -54,13 +53,13 @@ namespace TaskGroupWeb.Controllers
                     if (LoginStatus)
                     {
                         var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, _user.name),
-                        new Claim("userId", _user.userId.ToString()),
-                        new Claim("email", _user.login),
-                        new Claim("contact", _user.contact),
-                        new Claim("date.created", _user.dateCreated.ToString()),
-                    };
+                        {
+                            new Claim(ClaimTypes.Name, _user.name),
+                            new Claim("userId", _user.userId.ToString()),
+                            new Claim("email", _user.login),
+                            new Claim("contact", _user.contact),
+                            new Claim("date.created", _user.dateCreated.ToString()),
+                        };
 
                         ClaimsIdentity userIdentity = new ClaimsIdentity(claims, _tipoAutenticacao);
                         ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);

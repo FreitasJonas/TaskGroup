@@ -44,6 +44,8 @@ namespace TaskGroupWeb.Models
 
         public List<MessageModel> messages { get; set; }
 
+        public UserModel userOwn { get; set; }
+
         public TaskModel()
         {
             messages = new List<MessageModel>();
