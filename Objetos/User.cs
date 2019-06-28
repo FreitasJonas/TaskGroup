@@ -1,4 +1,5 @@
 ﻿using System;
+using static Objetos.DbEnumerators;
 
 namespace Objetos
 {
@@ -9,6 +10,8 @@ namespace Objetos
         public string password { get; set; }
         public string name { get; set; }
         public string contact { get; set; }
+        public UserStatus status { get; set; }
+        public UserAcesso acesso { get; set; }
         public DateTime dateCreated { get; set; }
     }
 }

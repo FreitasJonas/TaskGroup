@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static Objetos.DbEnumerators;
 
 namespace Objetos
 {
@@ -11,6 +12,8 @@ namespace Objetos
         public string description { get; set; }
         public string framework { get; set; }
         public DateTime dateCreated { get; set; }
+        public string git { get; set; }
+        public ProjectStatus status { get; set; }
 
         public List<Task> tasks { get; set; }
 

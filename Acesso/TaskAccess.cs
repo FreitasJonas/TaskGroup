@@ -22,8 +22,8 @@ namespace Acesso
             {
                 OpenDb();
 
-                Cmd.CommandText = "INSERT INTO tasks (id_task, id_project, cod_task, user_own, subject, description, status, dt_create, dt_sla, dt_finaly)" +
-                    " VALUES (@id_task, @id_project, @cod_task, @user_own, @subject, @description, @status, @dt_create, @dt_sla, @dt_finaly);";
+                Cmd.CommandText = "INSERT INTO tasks (id_task, id_project, cod_task, user_own, subject, description, nr_status, dt_create, dt_sla, dt_finaly)" +
+                    " VALUES (@id_task, @id_project, @cod_task, @user_own, @subject, @description, @nr_status, @dt_create, @dt_sla, @dt_finaly);";
 
                 Cmd.Parameters.AddWithValue("id_task", model.taskId);
                 Cmd.Parameters.AddWithValue("id_project", model.projectId);
@@ -31,7 +31,7 @@ namespace Acesso
                 Cmd.Parameters.AddWithValue("user_own", model.userOwnId);
                 Cmd.Parameters.AddWithValue("subject", model.subject);
                 Cmd.Parameters.AddWithValue("description", model.description);
-                Cmd.Parameters.AddWithValue("status", model.status);
+                Cmd.Parameters.AddWithValue("nr_status", model.status);
                 Cmd.Parameters.AddWithValue("dt_create", model.dateCreated);
                 Cmd.Parameters.AddWithValue("dt_sla", model.dateSla);
                 Cmd.Parameters.AddWithValue("dt_finaly", model.dateFinaly);
@@ -78,7 +78,7 @@ namespace Acesso
                     _task.userOwnId = Reader.GetInt32("user_own");
                     _task.subject = Reader.GetString("subject");
                     _task.description = Reader.GetString("description");
-                    _task.status = (TaskStatus) Reader.GetInt32("status");
+                    _task.status = (TaskStatus) Reader.GetInt32("nr_status");
                     _task.dateCreated = Reader.GetDateTime("dt_create");
                     _task.dateSla = Reader.GetDateTime("dt_sla");
                     _task.dateFinaly = Reader.GetDateTime("dt_finaly");
@@ -126,7 +126,7 @@ namespace Acesso
                     _task.userOwnId   = Reader.GetInt32("user_own");
                     _task.subject     = Reader.GetString("subject");
                     _task.description = Reader.GetString("description");
-                    _task.status      = (TaskStatus) Reader.GetInt32("status");
+                    _task.status      = (TaskStatus) Reader.GetInt32("nr_status");
                     _task.dateCreated = Reader.GetDateTime("dt_create");
                     _task.dateSla     = Reader.GetDateTime("dt_sla");
                     _task.dateFinaly = Reader.GetDateTime("dt_finaly");
@@ -168,7 +168,7 @@ namespace Acesso
                     _task.userOwnId = Reader.GetInt32("user_own");
                     _task.subject = Reader.GetString("subject");
                     _task.description = Reader.GetString("description");
-                    _task.status = (TaskStatus) Reader.GetInt32("status");
+                    _task.status = (TaskStatus) Reader.GetInt32("nr_status");
                     _task.dateCreated = Reader.GetDateTime("dt_create");
                     _task.dateSla = Reader.GetDateTime("dt_sla");
                     _task.dateFinaly = Reader.GetDateTime("dt_finaly");
@@ -198,7 +198,7 @@ namespace Acesso
                     "cod_task = @cod_task, " +
                     "subject = @subject, " +
                     "description = @description, " +
-                    "status = @status, " +
+                    "nr_status = @nr_status, " +
                     "dt_sla = @dt_sla, " +
                     "dt_finaly = @dt_finaly " +
                     "where id_task = @id_task";
@@ -209,7 +209,7 @@ namespace Acesso
                 Cmd.Parameters.AddWithValue("user_own", model.userOwnId);
                 Cmd.Parameters.AddWithValue("subject", model.subject);
                 Cmd.Parameters.AddWithValue("description", model.description);
-                Cmd.Parameters.AddWithValue("status", model.status);
+                Cmd.Parameters.AddWithValue("nr_status", model.status);
                 Cmd.Parameters.AddWithValue("dt_sla", model.dateSla);
                 Cmd.Parameters.AddWithValue("dt_finaly", model.dateFinaly);
 

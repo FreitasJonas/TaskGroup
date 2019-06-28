@@ -8,8 +8,10 @@ using Objetos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TaskGroupWeb.Helpers;
 using TaskGroupWeb.Models;
+using static Objetos.DbEnumerators;
 
 namespace TaskGroupWeb.Controllers
 {
@@ -44,7 +46,7 @@ namespace TaskGroupWeb.Controllers
                     TempData[result.ToString()] = message;
                 }
 
-                var projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List());
+                var projects = _mapper.Map<IList<ProjectModel>>(_db.DbProject.List(true));
                 return View(projects);
             }
             catch (Exception e)
@@ -111,21 +113,35 @@ namespace TaskGroupWeb.Controllers
 
                     if (users.Length > 0)
                     {
-                        var project = _mapper.Map<Project>(projectModel);
-                        project.authorId = UserUtilities.GetUserId(User.Claims);
+                        var pattern = _db.DbParam.Select("url_regex").value;
+                        var regex = new Regex(pattern);
 
-                        project.projectId = _db.DbProject.Insert(project);
-
-                        foreach (var userSubscribeId in users)
+                        if (!string.IsNullOrEmpty(projectModel.git) && !regex.IsMatch(projectModel.git))
                         {
-                            _db.DbProject.InsertUserSubscribe(project, int.Parse(userSubscribeId));
+                            return Json(new
+                            {
+                                message = "Por favor insira um repositório válido para o campo Git!",
+                                status = OperationResult.Error
+                            });
                         }
-
-                        return Json(new
+                        else
                         {
-                            action = Url.Action("Index", new { status = OperationResult.Success, message = "Projeto salvo com sucesso!" }),
-                            status = OperationResult.Success
-                        });
+                            var project = _mapper.Map<Project>(projectModel);
+                            project.authorId = UserUtilities.GetUserId(User.Claims);
+
+                            project.projectId = _db.DbProject.Insert(project);
+
+                            foreach (var userSubscribeId in users)
+                            {
+                                _db.DbProject.InsertUserSubscribe(project, int.Parse(userSubscribeId));
+                            }
+
+                            return Json(new
+                            {
+                                action = Url.Action("Index", new { status = OperationResult.Success, message = "Projeto salvo com sucesso!" }),
+                                status = OperationResult.Success
+                            });
+                        }
                     }
                     else
                     {
@@ -168,19 +184,34 @@ namespace TaskGroupWeb.Controllers
 
                     if (users.Length > 0)
                     {
-                        var project = _mapper.Map<Project>(projectModel);
-                        _db.DbProject.Update(project);
-                        _db.DbProject.UpdateUsers(project.projectId, users);
+                        var pattern = _db.DbParam.Select("url_regex").value;
+                        var regex = new Regex(pattern);
 
-                        return Json(new
+                        if (!string.IsNullOrEmpty(projectModel.git) && !regex.IsMatch(projectModel.git))
                         {
-                            action = Url.Action("Index", 
-                            new {
-                                message = "Projeto salvo com sucesso!",
+                            return Json(new
+                            {
+                                message = "Por favor insira um repositório válido para o campo Git!",
+                                status = OperationResult.Error
+                            });
+                        }
+                        else
+                        {
+                            var project = _mapper.Map<Project>(projectModel);
+                            _db.DbProject.Update(project);
+                            _db.DbProject.UpdateUsersSubscribe(project.projectId, users);
+
+                            return Json(new
+                            {
+                                action = Url.Action("Index",
+                                new
+                                {
+                                    message = "Projeto salvo com sucesso!",
+                                    status = OperationResult.Success
+                                }),
                                 status = OperationResult.Success
-                            }),
-                            status = OperationResult.Success
-                        });
+                            });
+                        }                        
                     }
                     else
                     {
@@ -204,8 +235,12 @@ namespace TaskGroupWeb.Controllers
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar projeto!";
-                return RedirectToAction("Index");
+
+                return Json(new
+                {
+                    message = "Ocorreu um erro ao salvar projeto!",
+                    status = OperationResult.Error
+                });
             }
         }
 
@@ -245,12 +280,14 @@ namespace TaskGroupWeb.Controllers
         {
             ViewBag.FrameWorks = HtmlHelpers.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value");
             ViewBag.Users = HtmlHelpers.GetDropDownList(_db.DbUser.List(), "userId", "name");
+            ViewBag.Status = HtmlHelpers.GetDropDownFromEnum<ProjectStatus>((int)ProjectStatus.Aberto);
         }
 
         private void ArrangeDropDownToEdit(ProjectModel project)
         {
             ViewBag.FrameWorks = HtmlHelpers.GetDropDownList(_db.DbParam.List("project_frameworks"), "value", "value", project.framework);
             ViewBag.Users = HtmlHelpers.GetDropDownList(_db.DbUser.List(), "userId", "name");
+            ViewBag.Status = HtmlHelpers.GetDropDownFromEnum<ProjectStatus>((int)project.status);
         }
 
         #endregion

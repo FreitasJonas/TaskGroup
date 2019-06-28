@@ -75,7 +75,7 @@ namespace TaskGroupWeb.Helpers
 
             if (topValue <= enumValues.Length)
             {
-                var topText = enumValues.GetValue(topValue - 1);
+                var topText = enumValues.GetValue(topValue); // topValue > 0 ? enumValues.GetValue(topValue) : enumValues.GetValue(0);
 
                 selectList.Add(new SelectListItem()
                 {
@@ -127,7 +127,7 @@ namespace TaskGroupWeb.Helpers
             return html;
         }
 
-        public static string GetColorToStatus(TaskStatus status)
+        public static string TaskStatusColor(TaskStatus status)
         {
             switch (status)
             {
@@ -141,7 +141,7 @@ namespace TaskGroupWeb.Helpers
             }
         }
 
-        public static string GetIconToStatus(TaskStatus status)
+        public static string TaskStatusIcon(TaskStatus status)
         {
             switch (status)
             {
@@ -152,6 +152,30 @@ namespace TaskGroupWeb.Helpers
                 case TaskStatus.Finalizado:
                     return "check";
                 default: return status.ToString();
+            }
+        }
+
+        public static string ProjectStatusColor(ProjectStatus status)
+        {
+            switch (status)
+            {
+                case ProjectStatus.Aberto:
+                    return "#008518";
+                case ProjectStatus.Fechado:
+                    return "#bd0000";
+                default: return "#C0C0C0";
+            }
+        }
+
+        public static string ProjectStatusIcon(ProjectStatus status)
+        {
+            switch (status)
+            {
+                case ProjectStatus.Aberto:
+                    return "envelope";
+                case ProjectStatus.Fechado:
+                    return "window-close";
+                default: return "";
             }
         }
     }

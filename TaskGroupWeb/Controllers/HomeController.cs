@@ -32,7 +32,7 @@ namespace TaskGroupWeb.Controllers
             _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string message = "", OperationResult status = OperationResult.Success)
         {
             try
             {
@@ -43,6 +43,7 @@ namespace TaskGroupWeb.Controllers
                     projectModels = projectsModel.ToList()
                 };
 
+                TempData[status.ToString()] = message;
                 return View(indexModel);
             }
             catch (Exception e)

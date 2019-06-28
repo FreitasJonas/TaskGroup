@@ -1,6 +1,7 @@
 ﻿using Objetos;
 using System;
 using System.Collections.Generic;
+using static Objetos.DbEnumerators;
 
 namespace Acesso
 {
@@ -21,13 +22,15 @@ namespace Acesso
             {
                 OpenDb();
 
-                Cmd.CommandText = "INSERT INTO projects (id_author, name, nm_desc, framework, dt_create) " +
-                    "VALUES (@id_author, @name, @nm_desc, @framework, @dt_create);";
+                Cmd.CommandText = "INSERT INTO projects (id_author, name, nm_desc, framework, git, nr_status, dt_create) " +
+                    "VALUES (@id_author, @name, @nm_desc, @framework, @git, @nr_status, @dt_create);";
 
                 Cmd.Parameters.AddWithValue("name", model.name);
                 Cmd.Parameters.AddWithValue("id_author", model.authorId);
                 Cmd.Parameters.AddWithValue("nm_desc", model.description);
                 Cmd.Parameters.AddWithValue("framework", model.framework);
+                Cmd.Parameters.AddWithValue("git", model.git);
+                Cmd.Parameters.AddWithValue("nr_status", model.status);
                 Cmd.Parameters.AddWithValue("dt_create", DateTime.Now);
 
                 if (Cmd.ExecuteNonQuery() > 0)
@@ -49,7 +52,7 @@ namespace Acesso
             }
         }
 
-        public List<T> List(object model = null)
+        public List<T> List(object includeClosed = null)
         {
             try
             {
@@ -57,7 +60,14 @@ namespace Acesso
 
                 var list = new List<Project>();
 
-                Cmd.CommandText = "select * from projects";
+                if (includeClosed == null)
+                {
+                    Cmd.CommandText = "select * from projects where nr_status = 0;";
+                }
+                else if(includeClosed != null && includeClosed is bool)
+                {
+                    Cmd.CommandText = (bool)includeClosed ? "select * from projects;" : "select * from projects where nr_status = 0;";
+                }
 
                 Reader = Cmd.ExecuteReader();
 
@@ -69,6 +79,8 @@ namespace Acesso
                     project.name = Reader.GetString("name");
                     project.description = Reader.GetString("nm_desc");
                     project.framework = Reader.GetString("framework");
+                    project.git = Reader.GetString("git");
+                    project.status = (ProjectStatus) Reader.GetInt32("nr_status");
                     project.dateCreated = Reader.GetDateTime("dt_create");
 
                     list.Add(project);
@@ -106,6 +118,8 @@ namespace Acesso
                     project.name = Reader.GetString("name");
                     project.description = Reader.GetString("nm_desc");
                     project.framework = Reader.GetString("framework");
+                    project.git = Reader.GetString("git");
+                    project.status = (ProjectStatus) Reader.GetInt32("nr_status");
                     project.dateCreated = Reader.GetDateTime("dt_create");
                 }
 
@@ -167,17 +181,42 @@ namespace Acesso
             }
         }
 
+        public void CloseProject(int projectId)
+        {
+            try
+            {
+                OpenDb();
+
+                Cmd.CommandText = "update projects set nr_status = @nr_status where id_project = @id_project";
+
+                Cmd.Parameters.AddWithValue("id_project", projectId);
+                Cmd.Parameters.AddWithValue("nr_status", ProjectStatus.Fechado);
+
+                Cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                CloseDb();
+            }
+        }
+
         public void Update(T model)
         {
             try
             {
                 OpenDb();
 
-                Cmd.CommandText = "update projects set name = @name, nm_desc = @nm_desc, framework = @framework where id_project = @id_project";
+                Cmd.CommandText = "update projects set name = @name, nm_desc = @nm_desc, git = @git, nr_status = @nr_status, framework = @framework where id_project = @id_project";
 
                 Cmd.Parameters.AddWithValue("name", model.name);
                 Cmd.Parameters.AddWithValue("nm_desc", model.description);
                 Cmd.Parameters.AddWithValue("framework", model.framework);
+                Cmd.Parameters.AddWithValue("git", model.git);
+                Cmd.Parameters.AddWithValue("nr_status", model.status);
                 Cmd.Parameters.AddWithValue("id_project", model.projectId);
 
                 Cmd.ExecuteNonQuery();
@@ -192,7 +231,7 @@ namespace Acesso
             }
         }
 
-        public void UpdateUsers(int projectId, params object[] users)
+        public void UpdateUsersSubscribe(int projectId, params object[] users)
         {
             try
             {

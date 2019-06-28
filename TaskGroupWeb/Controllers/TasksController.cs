@@ -1,5 +1,6 @@
 ﻿using Acesso;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ using static Objetos.DbEnumerators;
 
 namespace TaskGroupWeb.Controllers
 {
+    [Authorize]
     public class TasksController : Controller
     {
         public DbContext _db { get; set; }
@@ -48,23 +50,29 @@ namespace TaskGroupWeb.Controllers
                 {
                     var projectModel = _mapper.Map<ProjectModel>(_db.DbProject.Select(projectId));
                     var tasks = _mapper.Map<IList<TaskModel>>(_db.DbTask.ListFromProject(projectId)).ToList();
-
                     projectModel.tasks = tasks;
+
+                    if (!string.IsNullOrEmpty(projectModel.git))
+                    {
+                        ViewBag.HasRepositoryLink = true;
+                    }
+                    else
+                    {
+                        ViewBag.HasRepositoryLink = false;
+                    }
 
                     MakeBreadCrumbToIndexView(projectModel);
                     return View(projectModel);
                 }
                 else
                 {
-                    TempData[OperationResult.Error.ToString()] = "Projeto não encontrado!";
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home", new { message = "Projeto não encontrado!", status = OperationResult.Error });
                 }
             }
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar os projetos!";
-                return View();
+                return RedirectToAction("Index", "Home", new { message = "Ocorreu um erro ao carregar o projeto!", status = OperationResult.Error });
             }
         }
 
@@ -88,8 +96,7 @@ namespace TaskGroupWeb.Controllers
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro inesperado!";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home", new { message = "Ocorreu um erro ao carregar tarefa!", status = OperationResult.Error });
             }
         }
 
@@ -133,8 +140,37 @@ namespace TaskGroupWeb.Controllers
             catch (Exception e)
             {
                 Logger.SaveLog(e, _configuration);
-                TempData[OperationResult.Error.ToString()] = "Ocorreu um erro ao carregar tarefa!";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home", new { message = "Ocorreu um erro ao carregar tarefa!", status = OperationResult.Error });
+            }
+        }
+
+        public IActionResult CloseProject(string _projectId)
+        {
+            try
+            {
+                #region - Decrypt -
+
+                var projectId = int.Parse(_projectId.DecryptUrl());
+
+                #endregion
+
+                _db.DbProject.CloseProject(projectId);
+
+                return Json(new
+                {
+                    action = Url.Action("Index", "Home", new { message = "Projeto fechado com sucesso!", status = OperationResult.Success }),
+                    status = OperationResult.Success
+                });
+            }
+            catch (Exception e)
+            {
+                Logger.SaveLog(e, _configuration);
+
+                return Json(new
+                {
+                    message = "Ocorreu um erro inesperado!",
+                    status = OperationResult.Error
+                });
             }
         }
 

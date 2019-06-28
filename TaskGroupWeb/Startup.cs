@@ -48,6 +48,12 @@ namespace TaskGroupWeb
             {
                 options.LoginPath = "/Login/Index/";
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdministratorRole",
+                     policy => policy.RequireRole("Administrator"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

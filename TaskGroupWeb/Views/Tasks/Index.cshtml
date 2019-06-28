@@ -44,10 +44,20 @@
                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
                     <div class="dropdown-header">Ações:</div>
 
-                    <a class="dropdown-item" href="#"><i class="fas fa-times-circle fa-sm fa-fw text-gray-400"></i> Fechar Projeto</a>
+                    <a class="dropdown-item close-project" href="#"><i class="fas fa-times-circle fa-sm fa-fw text-gray-400"></i> Fechar Projeto</a>
 
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#"> <i class="fas fa-code-branch fa-sm fa-fw text-gray-400"></i> Ver no Git</a>
+
+                    @if (ViewBag.HasRepositoryLink)
+                    {
+                        <a class="dropdown-item" href="@Model.git" target="_blank"> <i class="fas fa-code-branch fa-sm fa-fw text-gray-400"></i> Ver no Git</a>
+                    }
+                    else
+                    {
+                        <a class="dropdown-item disabled" href="#"> <i class="fas fa-code-branch fa-sm fa-fw text-gray-400"></i> Ver no Git</a>
+                    }
+
+
                 </div>
 
             </div>
@@ -103,8 +113,8 @@
                                     @task.description
                                 </td>
                                 <td>
-                                    <div class="bg-status" style="background-color: @HtmlHelpers.GetColorToStatus(task.status)">
-                                        <h6 class="card-title mb-1" style="color: #ffffff"> <i class="fa fa-@HtmlHelpers.GetIconToStatus(task.status)" aria-hidden="true"></i> @task.status.ToString()</h6>
+                                    <div class="bg-status" style="background-color: @HtmlHelpers.TaskStatusColor(task.status)">
+                                        <h6 class="card-title mb-1" style="color: #ffffff"> <i class="fa fa-@HtmlHelpers.TaskStatusIcon(task.status)" aria-hidden="true"></i> @task.status.ToString()</h6>
                                     </div>
                                 </td>
                             </tr>
@@ -127,5 +137,27 @@
 
     <script>
         $('.table').DataTable(getDataTableConfig());
+
+        $('.close-project').click(function () {
+
+            let projectId = '@Model.projectId.EncryptUrl()';
+            ConfirmDefault("Tem certeza que desja fechar este projeto?", "Sim",
+                function () {
+                    let url = `/Tasks/CloseProject?_projectId=${projectId}`;
+
+                    LoadingShow();
+
+                    submitAssync(url, null,
+                        function (response) {
+                            console.log(response)
+                            location.href = response.action;
+                        },
+                        function (response) {
+                            console.log(response)
+                            swal("", response.message)
+                            LoadingHide();
+                        })
+                })
+        })
     </script>
 }

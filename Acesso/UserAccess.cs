@@ -1,6 +1,7 @@
 ﻿using Objetos;
 using System;
 using System.Collections.Generic;
+using static Objetos.DbEnumerators;
 
 namespace Acesso
 {
@@ -22,13 +23,15 @@ namespace Acesso
             {
                 OpenDb();
 
-                Cmd.CommandText = "INSERT INTO users (login, pass, name, contact, dt_create) VALUES " +
-                                  "(@login, @pass, @name, @contact, @dt_create);";
+                Cmd.CommandText = "INSERT INTO users (login, pass, name, contact, nr_status, nr_acesso, dt_create) VALUES " +
+                                  "(@login, @pass, @name, @contact, @nr_status, @nr_acesso, @dt_create);";
 
                 Cmd.Parameters.AddWithValue("login", model.login);
                 Cmd.Parameters.AddWithValue("pass", model.password);
                 Cmd.Parameters.AddWithValue("name", model.name);
                 Cmd.Parameters.AddWithValue("contact", model.contact);
+                Cmd.Parameters.AddWithValue("nr_status", model.status);
+                Cmd.Parameters.AddWithValue("nr_acesso", model.acesso);
                 Cmd.Parameters.AddWithValue("dt_create", DateTime.Now);
 
                 if(Cmd.ExecuteNonQuery() > 0)
@@ -50,7 +53,7 @@ namespace Acesso
             }
         }
 
-        public T Select(object idUser) 
+        public T Select(object userId) 
         {
             try
             {
@@ -60,7 +63,7 @@ namespace Acesso
 
                 Cmd.CommandText = "select * from users where id_user = @id_user";
 
-                Cmd.Parameters.AddWithValue("id_user", idUser);
+                Cmd.Parameters.AddWithValue("id_user", userId);
                 
                 Reader = Cmd.ExecuteReader();
 
@@ -71,6 +74,8 @@ namespace Acesso
                     _user.name = Reader.GetString("name");
                     _user.password = Reader.GetString("pass");
                     _user.contact = Reader.GetString("contact");
+                    _user.status = (UserStatus)Reader.GetInt32("nr_status");
+                    _user.acesso = (UserAcesso)Reader.GetInt32("nr_acesso");
                     _user.dateCreated = Reader.GetDateTime("dt_create");
                 }
 
@@ -92,12 +97,14 @@ namespace Acesso
             {
                 OpenDb();
 
-                Cmd.CommandText = "update users set name = @name, pass = @pass, contact = @contact where id_user = @id_user";
+                Cmd.CommandText = "update users set name = @name, pass = @pass, contact = @contact, nr_status = @nr_status, nr_acesso = @nr_acesso where id_user = @id_user";
 
                 Cmd.Parameters.AddWithValue("name", model.name);
                 Cmd.Parameters.AddWithValue("pass", model.password);
                 Cmd.Parameters.AddWithValue("contact", model.contact);
                 Cmd.Parameters.AddWithValue("id_user", model.userId);
+                Cmd.Parameters.AddWithValue("nr_status", model.status);
+                Cmd.Parameters.AddWithValue("nr_acesso", model.acesso);
 
                 Cmd.ExecuteNonQuery();
             }
@@ -132,6 +139,8 @@ namespace Acesso
                     _user.login = Reader.GetString("login");
                     _user.name = Reader.GetString("name");
                     _user.contact = Reader.GetString("contact");
+                    _user.status = (UserStatus)Reader.GetInt32("nr_status");
+                    _user.acesso = (UserAcesso)Reader.GetInt32("nr_acesso");
                     _user.dateCreated = Reader.GetDateTime("dt_create");
 
                     validate = true;
@@ -173,6 +182,8 @@ namespace Acesso
                     _user.login = Reader.GetString("login");
                     _user.name = Reader.GetString("name");
                     _user.contact = Reader.GetString("contact");
+                    _user.status = (UserStatus)Reader.GetInt32("nr_status");
+                    _user.acesso = (UserAcesso)Reader.GetInt32("nr_acesso");
                     _user.dateCreated = Reader.GetDateTime("dt_create");
 
                     isValid = false;
@@ -214,6 +225,8 @@ namespace Acesso
                     _user.login = Reader.GetString("login");
                     _user.name = Reader.GetString("name");
                     _user.contact = Reader.GetString("contact");
+                    _user.status = (UserStatus)Reader.GetInt32("nr_status");
+                    _user.acesso = (UserAcesso)Reader.GetInt32("nr_acesso");
                     _user.dateCreated = Reader.GetDateTime("dt_create");
 
                     list.Add(_user);

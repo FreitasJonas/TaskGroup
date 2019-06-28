@@ -21,6 +21,7 @@ namespace Acesso
         }
 
         public List<T> List(object param)
+
         {
             try
             {
@@ -57,9 +58,37 @@ namespace Acesso
             }            
         }
 
-        public T Select(object model)
+        public T Select(object param)
         {
-            throw new NotImplementedException();
+            try
+            {
+                OpenDb();
+
+                var _param = Activator.CreateInstance<T>();
+
+                Cmd.CommandText = "select * from param where nm_nome = @nm_nome and nr_status = 0";
+                Cmd.Parameters.AddWithValue("nm_nome", param.ToString());
+
+                Reader = Cmd.ExecuteReader();
+
+                if (Reader.Read())
+                {
+                    _param.name = Reader.GetString("nm_nome");
+                    _param.value = Reader.GetString("nm_valor");
+                    _param.status = Reader.GetInt32("nr_status");
+                    _param.description = Reader.GetString("nm_desc");
+                }
+
+                return _param;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                CloseDb();
+            }
         }
 
         public void Update(T model)

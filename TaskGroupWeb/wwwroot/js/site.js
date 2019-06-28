@@ -72,3 +72,21 @@ function ActiveProjectMenu(projectId) {
 
     $('.project_' + projectId).addClass('active');
 }
+
+function ConfirmDefault(mensagem, acao, callback) {
+
+    swal({
+        title: "",
+        text: mensagem,
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: acao,
+        cancelButtonText: "Cancelar"
+    },
+        function () {
+
+            callback();
+        });
+
+    $('.sa-button-container .cancel').focus();
+}

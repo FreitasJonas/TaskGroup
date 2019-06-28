@@ -14,18 +14,33 @@
 
     <div class="col-md-5">
         <form asp-action="Edit" id="form-project">
-            
+
             <input asp-for="projectId" class="form-control" hidden />
-            
+
             <div class="form-group">
                 <label asp-for="name" class="control-label"></label>
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="description" class="control-label"></label>
                 <input asp-for="description" class="form-control" />
                 <span asp-validation-for="description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="_git" class="control-label"></label>
+                <input asp-for="_git" class="form-control" />
+                <span asp-validation-for="_git" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.status, new { @class = "control-label" })
+                <div class="input-size">
+                    @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control", @disabled = "disabled" })
+                    @Html.ValidationMessageFor(m => m.status, "", new { @class = "text-danger" })
+                </div>
             </div>
 
             <div class="form-group">
@@ -99,7 +114,6 @@
 </div>
 
 @section scripts {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/js/Views/Projects/ProjectUsersSelect.js"></script>
 
     <script>

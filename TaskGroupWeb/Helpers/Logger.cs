@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 
+
 namespace TaskGroupWeb.Helpers
 {
     public class Logger
@@ -21,7 +22,7 @@ namespace TaskGroupWeb.Helpers
 
             using (StreamWriter w = new StreamWriter(filePath, true, Encoding.UTF8))
             {
-                w.WriteLine($"{DateTime.Now.TimeOfDay} - [Source: {e.Source}] [Message: {e.Message}]");
+                w.WriteLine($"{StringHelper.DataHora} - [Source: {e.Source}] [TargetSite: {e.TargetSite}] [Message: {e.Message}]");
             }
         }
     }

@@ -22,10 +22,25 @@
                 <input asp-for="name" class="form-control" />
                 <span asp-validation-for="name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="description" class="control-label"></label>
                 <input asp-for="description" class="form-control" />
                 <span asp-validation-for="description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="_git" class="control-label"></label>
+                <input asp-for="_git" class="form-control" />
+                <span asp-validation-for="_git" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.status, new { @class = "control-label" })
+                <div class="input-size">
+                    @Html.DropDownList("status", ViewBag.Status as IEnumerable<SelectListItem>, new { @class = "form-control", @disabled = "disabled" })
+                    @Html.ValidationMessageFor(m => m.status, "", new { @class = "text-danger" })
+                </div>
             </div>
 
             <div class="form-group">
@@ -131,6 +146,5 @@
                 }
             }
         })
-
     </script>
 }

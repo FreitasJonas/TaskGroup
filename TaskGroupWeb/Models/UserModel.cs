@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using static Objetos.DbEnumerators;
 
 namespace TaskGroupWeb.Models
 {
@@ -29,6 +30,14 @@ namespace TaskGroupWeb.Models
         [Display(Name = "Contato*")]
         [Required(ErrorMessage = "Campo obrigatório!")]
         public string contact { get; set; }
+
+        [Display(Name = "Status*")]
+        [Required(ErrorMessage = "Campo obrigatório!")]
+        public UserStatus status { get; set; }
+
+        [Display(Name = "Nível de acesso*")]
+        [Required(ErrorMessage = "Campo obrigatório!")]
+        public UserAcesso acesso { get; set; }
 
         [Display(Name = "Data de cadastro")]
         public DateTime dateCreated { get; set; }
