@@ -59,6 +59,7 @@ namespace TaskGroupWeb.Controllers
                             new Claim("email", _user.login),
                             new Claim("contact", _user.contact),
                             new Claim("date.created", _user.dateCreated.ToString()),
+                            new Claim("acesso", _user.acesso.ToString())
                         };
 
                         ClaimsIdentity userIdentity = new ClaimsIdentity(claims, _tipoAutenticacao);

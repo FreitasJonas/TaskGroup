@@ -7,13 +7,14 @@ using Microsoft.Extensions.Configuration;
 using Objetos;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
+using TaskGroupWeb.Filters;
 using TaskGroupWeb.Helpers;
 using TaskGroupWeb.Models;
 using static Objetos.DbEnumerators;
 
 namespace TaskGroupWeb.Controllers
 {
-    [Authorize(Policy = "RequireAdministratorRole", Roles = "Administrator")]
     public class UsersController : Controller
     {
         public DbContext _db { get; set; }
@@ -34,7 +35,7 @@ namespace TaskGroupWeb.Controllers
         }
 
         #region GET
-
+        [ServiceFilter(typeof(ClaimRequirementFilterAttribute()]
         public IActionResult Index(string message = "", OperationResult status = OperationResult.Success)
         {
             try
