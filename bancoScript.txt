@@ -28,17 +28,12 @@ CREATE TABLE IF NOT EXISTS `messages` (
   PRIMARY KEY (`id_message`),
   KEY `message_task` (`id_task`),
   CONSTRAINT `message_task` FOREIGN KEY (`id_task`) REFERENCES `tasks` (`id_task`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- Copiando dados para a tabela taskdb.messages: ~6 rows (aproximadamente)
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
 INSERT INTO `messages` (`id_message`, `id_task`, `id_user`, `message`, `dt_create`) VALUES
-	(3, 23, 1, '<p>TESTE</p>', '2019-06-27 13:13:22'),
-	(4, 23, 1, 'TESTE', '2019-06-28 15:59:06'),
-	(5, 23, 1, '<p>aefdasdasd</p>', '2019-06-28 16:02:05'),
-	(6, 23, 1, '<p>awdasdasfsdfsdfsdf</p>', '2019-06-28 16:02:10'),
-	(7, 23, 1, '<p>sadasdasdasd</p>', '2019-06-28 16:02:12'),
-	(8, 23, 1, '<p>asdasdasd</p>', '2019-06-28 16:02:14');
+	(9, 27, 1, '<p>efsdfsdf</p>', '2019-07-13 13:16:28');
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.param
@@ -73,16 +68,12 @@ CREATE TABLE IF NOT EXISTS `projects` (
   PRIMARY KEY (`id_project`),
   KEY `project_user_author` (`id_author`),
   CONSTRAINT `project_user_author` FOREIGN KEY (`id_author`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.projects: ~5 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.projects: ~3 rows (aproximadamente)
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
 INSERT INTO `projects` (`id_project`, `id_author`, `name`, `nm_desc`, `framework`, `git`, `nr_status`, `dt_create`) VALUES
-	(35, 1, 'TaskGroup', 'Teste', 'Asp.Net Core C#', 'https://github.com/FreitasJonas/TaskGroup', 0, '2019-06-27 13:12:30'),
-	(36, 1, 'TaskGroup 5', 'Teste', 'Asp.Net Core C#', '', 1, '2019-06-28 10:02:29'),
-	(37, 1, 'TaskGroup 78', 'Teste', 'Asp.Net Core C#', '', 1, '2019-06-28 10:52:20'),
-	(38, 1, 'TaskGroup 8', 'Teste', 'Asp.Net Core C#', 'https://github.com/FreitasJonas/TaskGroup', 1, '2019-06-28 15:21:51'),
-	(39, 1, 'TaskGroup 435', 'Teste', 'Asp.Net Core C#', 'https://github.com/FreitasJonas/TaskGroup', 1, '2019-06-28 15:45:04');
+	(40, 1, 'ShopTrem', 'Trabalho de Graduação', 'Unity C#', '', 0, '2019-07-13 11:32:48');
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.project_users
@@ -99,11 +90,10 @@ CREATE TABLE IF NOT EXISTS `project_users` (
 -- Copiando dados para a tabela taskdb.project_users: ~5 rows (aproximadamente)
 /*!40000 ALTER TABLE `project_users` DISABLE KEYS */;
 INSERT INTO `project_users` (`id_project`, `id_user`) VALUES
-	(35, 1),
-	(36, 9),
-	(37, 9),
-	(38, 9),
-	(39, 9);
+	(40, 1),
+	(40, 16),
+	(40, 17),
+	(40, 18);
 /*!40000 ALTER TABLE `project_users` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.tasks
@@ -122,14 +112,15 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   PRIMARY KEY (`id_task`),
   KEY `task_project` (`id_project`),
   CONSTRAINT `task_project` FOREIGN KEY (`id_project`) REFERENCES `projects` (`id_project`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.tasks: ~3 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.tasks: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
 INSERT INTO `tasks` (`id_task`, `id_project`, `cod_task`, `user_own`, `subject`, `description`, `nr_status`, `dt_create`, `dt_sla`, `dt_finaly`) VALUES
-	(23, 35, '2019-06-00023', 1, 'teste', 'TESTE', 2, '2019-06-27 13:12:49', '2019-06-27 00:00:00', '0001-01-01 00:00:00'),
-	(24, 35, '2019-06-00024', 9, 'teste', 'TESTE', 1, '2019-06-27 15:58:24', '2019-06-27 00:00:00', '0001-01-01 00:00:00'),
-	(25, 35, '2019-06-00025', 9, 'teste', 'TESTE', 0, '2019-06-27 15:58:37', '2019-06-27 00:00:00', '0001-01-01 00:00:00');
+	(26, 40, '2019-07-00026', 1, 'Aprimorar animação do guarda', 'Aprimorar animação do guarda quando a prisão do marreteiro é efetuada. ', 0, '2019-07-13 11:34:46', '2019-07-31 00:00:00', '0001-01-01 00:00:00'),
+	(27, 40, '2019-07-00027', 16, 'Plano de negócios', 'Finalizar o plano de negócios no mesmo arquivo que o GDD.', 0, '2019-07-13 11:35:49', '2019-07-31 00:00:00', '0001-01-01 00:00:00'),
+	(28, 40, '2019-07-00028', 17, 'Elaborar cutscene inicial.', 'Entregar esboço da cutscene inicial seguindo o roteiro.', 0, '2019-07-13 11:37:12', '2019-07-31 00:00:00', '0001-01-01 00:00:00'),
+	(29, 40, '2019-07-00029', 18, 'Finalizar elaboração da monetização no GDD', 'Elaborar e entregar a parte de monetização dentro do GDD.', 0, '2019-07-13 11:38:37', '2019-07-31 00:00:00', '0001-01-01 00:00:00');
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela taskdb.users
@@ -146,13 +137,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id_user`),
   UNIQUE KEY `login` (`login`),
   KEY `senha` (`pass`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela taskdb.users: ~2 rows (aproximadamente)
+-- Copiando dados para a tabela taskdb.users: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id_user`, `login`, `pass`, `name`, `contact`, `nr_status`, `nr_acesso`, `dt_create`) VALUES
 	(1, 'jonascontato15@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Azevedo', '11955572997', 0, 0, '2019-05-03 09:35:35'),
-	(9, 'jonascontato156@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Jonas Freitas Teste', '11955572997', 0, 1, '2019-06-26 11:52:48');
+	(16, 'carvalhomat84@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Matheus Ananias', '11 96475-3773', 0, 1, '2019-07-13 11:30:09'),
+	(17, 'fabisfsf@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Fabiana Ferreira', '11 95347-0228', 0, 1, '2019-07-13 11:31:18'),
+	(18, 'v.santos066@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 'Vinicius Santos', '11 99844-5930', 0, 1, '2019-07-13 11:32:09');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
