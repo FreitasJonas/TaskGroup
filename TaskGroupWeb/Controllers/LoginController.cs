@@ -32,8 +32,9 @@ namespace TaskGroupWeb.Controllers
             _tipoAutenticacao = configuration.GetSection("TipoAuthenticacao").Value;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string message = "")
         {
+            TempData["Message"] = message;
             return View();
         }
 
@@ -67,7 +68,7 @@ namespace TaskGroupWeb.Controllers
 
                         await HttpContext.SignInAsync(principal);
 
-                        TempData["Message"] = "Success!";
+                        //TempData["Message"] = "Success!";
                         return RedirectToAction("Index", "Home");
                     }
                     else
@@ -90,11 +91,11 @@ namespace TaskGroupWeb.Controllers
             }
         }
 
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string message = "")
         {
             TempData.Clear();
             await HttpContext.SignOutAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { message = message });
         }
     }
 }

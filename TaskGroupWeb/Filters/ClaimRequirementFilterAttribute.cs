@@ -1,31 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace TaskGroupWeb.Filters
 {
-    public class ClaimRequirementFilterAttribute : IAuthorizationFilter
+    public class ClaimRequirementFilterAttribute :  Attribute, IAuthorizationFilter
     {
-        readonly Claim _claim;
+        readonly string PerfilAllowed;
 
-        public ClaimRequirementFilterAttribute(Claim claim)
+        public ClaimRequirementFilterAttribute(string perfilAllowed)
         {
-            _claim = claim;
+            PerfilAllowed = perfilAllowed;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var hasClaim = context.HttpContext.User.Claims.Any(c => c.Type == _claim.Type && c.Value == _claim.Value);
+            var hasClaim = context.HttpContext.User.Claims.Any(c => c.Type == "acesso" && c.Value == PerfilAllowed);
             if (!hasClaim)
             {
-                context.Result = new ContentResult()
-                {
-                    Content = "Acesso negado!"
-                };
+                context.Result = new RedirectToActionResult("Logout", "Login", new { message = "Acesso negado!" });
             }
         }
     }

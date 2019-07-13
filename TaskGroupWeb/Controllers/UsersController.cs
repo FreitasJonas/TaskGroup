@@ -15,6 +15,7 @@ using static Objetos.DbEnumerators;
 
 namespace TaskGroupWeb.Controllers
 {
+    [ClaimRequirementFilter("Administrador")]
     public class UsersController : Controller
     {
         public DbContext _db { get; set; }
@@ -35,7 +36,6 @@ namespace TaskGroupWeb.Controllers
         }
 
         #region GET
-        [ServiceFilter(typeof(ClaimRequirementFilterAttribute()]
         public IActionResult Index(string message = "", OperationResult status = OperationResult.Success)
         {
             try

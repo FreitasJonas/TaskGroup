@@ -129,6 +129,8 @@ namespace TaskGroupWeb.Controllers
                 var user = _mapper.Map<UserModel>(_db.DbUser.Select(task.userOwnId));
                 ArrangeDropDownToEdit(taskModel, user);
 
+                taskModel.userOwn = user;
+
                 if (!string.IsNullOrEmpty(message))
                 {
                     TempData[OperationResult.Success.ToString()] = message;
@@ -228,25 +230,14 @@ namespace TaskGroupWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (UserUtilities.UserIsTaskOwner(User.Claims, taskModel))
-                    {
-                        var task = _mapper.Map<Task>(taskModel);
-                        _db.DbTask.Update(task);
+                    var task = _mapper.Map<Task>(taskModel);
+                    _db.DbTask.Update(task);
 
-                        return Json(new
-                        {
-                            action = Url.Action("Edit", "Tasks", new { _taskId = task.taskId.EncryptUrl(), message = "Tarefa salva com sucesso!" }),
-                            status = OperationResult.Success
-                        });
-                    }
-                    else
+                    return Json(new
                     {
-                        return Json(new
-                        {
-                            message = "Você não possui permissão para executar esta ação!",
-                            status = OperationResult.Error
-                        });
-                    }
+                        action = Url.Action("Edit", "Tasks", new { _taskId = task.taskId.EncryptUrl(), message = "Tarefa salva com sucesso!" }),
+                        status = OperationResult.Success
+                    });
                 }
                 else
                 {
@@ -277,24 +268,26 @@ namespace TaskGroupWeb.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (UserUtilities.UserIsTaskOwner(User.Claims, _db.DbTask.Select(messageModel.taskId)))
-                    {
-                        var message = _mapper.Map<Message>(messageModel);
-                        message.userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userId").Value);
-                        message.dateCreated = DateTime.Now;
+                    var message = _mapper.Map<Message>(messageModel);
+                    message.userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userId").Value);
+                    message.dateCreated = DateTime.Now;
 
-                        _db.DbMessage.Insert(message);
+                    _db.DbMessage.Insert(message);
 
-                        return Json(new
-                        {
-                            action = Url.Action("Edit", "Tasks", new { _taskId = messageModel.taskId.EncryptUrl(), message = "Mensagem enviada com sucesso!" }),
-                            status = OperationResult.Success
-                        });
-                    }
-                    else
+                    return Json(new
                     {
-                        return Json(new { status = OperationResult.Error, message = "Você não possui permissão para executar esta ação!" });
-                    }
+                        action = Url.Action("Edit", "Tasks", new { _taskId = messageModel.taskId.EncryptUrl(), message = "Mensagem enviada com sucesso!" }),
+                        status = OperationResult.Success
+                    });
+
+                    //if (UserUtilities.UserIsTaskOwner(User.Claims, _db.DbTask.Select(messageModel.taskId)))
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                    //    return Json(new { status = OperationResult.Error, message = "Você não possui permissão para executar esta ação!" });
+                    //}
                 }
                 else
                 {

@@ -51,27 +51,29 @@
     <!-- Card Body -->
     <div class="card-body">
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-7">
 
-                @if (UserUtilities.UserIsTaskOwner(User.Claims, Model) && Model.status != Objetos.DbEnumerators.TaskStatus.Finalizado)
+                <div id="alert-message" hidden>
+                    <p class="alert alert-danger" id="alert-message-text"></p>
+                </div>
+
+                <form asp-action="SendMessage" id="form-message" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <textarea id="summer" name="message"></textarea>
+
+                    <button class="btn btn-primary" type="submit" style="margin-top:10px;">Enviar</button>
+                </form>
+
+                @*@if (UserUtilities.UserIsTaskOwner(User.Claims, Model) && Model.status != Objetos.DbEnumerators.TaskStatus.Finalizado)
                 {
-                    <div id="alert-message" hidden>
-                        <p class="alert alert-danger" id="alert-message-text"></p>
-                    </div>
 
-                    <form asp-action="SendMessage" id="form-message" enctype="multipart/form-data">
-                        @Html.AntiForgeryToken()
-
-                        <textarea id="summer" name="message"></textarea>
-
-                        <button class="btn btn-primary" type="submit" style="margin-top:10px;">Enviar</button>
-                    </form>                   
                 }
                 else
                 {
                     <textarea id="summer" disabled></textarea>
                     <button class="btn btn-primary" disabled style="margin-top: 10px;">Enviar</button>
-                }
+                }*@
 
                 <br />
                 <br />
@@ -107,7 +109,7 @@
 
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-5">
 
                 <!-- Basic Card Example -->
                 <div class="card shadow mb-4">
@@ -130,17 +132,33 @@
                                 <span asp-validation-for="taskCode" class="text-danger"></span>
                             </div>
 
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
-                                <div class="input-size">
-                                    @Html.DropDownList("userOwnId", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
+                            <input type="text" id="isAdmin" value="@User.HasClaim("acesso", "Administrador").ToString()" hidden />
+
+                            @if (User.HasClaim("acesso", "Administrador"))
+                            {
+
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
+                                    <div class="input-size">
+                                        @Html.DropDownList("userOwnId", ViewBag.Users as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
-                            </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.userOwnId, new { @class = "control-label" })
+                                    <div class="input-size">
+                                        @Html.TextBox("userOwnId", Model.userOwn.name, new { @class = "form-control", @readonly = "readonly", data_userid = Model.userOwn.userId })
+                                        @Html.ValidationMessageFor(m => m.userOwnId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            }
 
                             <div class="form-group">
                                 <label asp-for="subject" class="control-label"></label>
-                                <input asp-for="subject" class="form-control" readonly />
+                                <textarea asp-for="subject" class="form-control" readonly></textarea>
                                 <span asp-validation-for="subject" class="text-danger"></span>
                             </div>
 
@@ -160,7 +178,16 @@
 
                             <div class="form-group">
                                 <label asp-for="dateSla" class="control-label"></label>
-                                <input asp-for="dateSla" type="text" class="form-control" />
+
+                                @if (User.HasClaim("acesso", "Administrador"))
+                                {
+                                    <input asp-for="dateSla" type="text" class="form-control" />
+                                }
+                                else
+                                {
+                                    <input asp-for="dateSla" type="text" class="form-control" readonly />
+                                }
+
                                 <span asp-validation-for="dateSla" class="text-danger"></span>
                             </div>
 
@@ -178,24 +205,12 @@
 
                             <div class="form-group">
 
-                                @if (UserUtilities.UserIsTaskOwner(User.Claims, Model) && Model.status != Objetos.DbEnumerators.TaskStatus.Finalizado)
-                                {
-                                    <button type="submit" class="btn btn-success btn-icon-split">
-                                        <span class="icon text-white-50">
-                                            <i class="fas fa-check"></i>
-                                        </span>
-                                        <span class="text">Salvar</span>
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" disabled class="btn btn-success btn-icon-split">
-                                        <span class="icon text-white-50">
-                                            <i class="fas fa-check"></i>
-                                        </span>
-                                        <span class="text">Salvar</span>
-                                    </button>
-                                }
+                                <button type="submit" class="btn btn-success btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="text">Salvar</span>
+                                </button>
 
                                 <br /><br />
 
@@ -226,14 +241,8 @@
     <script>
 
         $(document).ready(function () {
-            let isOwn = '@UserUtilities.UserIsTaskOwner(User.Claims, Model)'
-
-            if (isOwn == "False") {
-                $('#form-task :input').attr('disabled', true)
-            }
 
             $("#dateSla").datepicker(getDatePickerConfiguration());
-            //$("#dateSla").datepicker('setDate', new Date());
 
             $('#summer').summernote({
                 height: 200,
@@ -252,17 +261,20 @@
             var url = $(this).attr("action");
             let data = $(this).serializeArray();
 
-            if($(this).valid()) {
+            if ($('#isAdmin').val() == 'False') {
+
+                data[data.findIndex(u => u.name == "userOwnId")] .value = $("#userOwnId").data("userid");
+            }
+
+            if ($(this).valid()) {
                 submitAssync(url, data,
-                function (response) {
-                    console.log(response)
-                    window.location.href = response.action
-                },
-                function (response) {
-                    console.log(response)
-                    $('#alert-message').attr('hidden', false)
-                    $('#alert-message-text').text(response.message);
-                })
+                    function (response) {
+                        window.location.href = response.action
+                    },
+                    function (response) {
+                        console.log(response);
+                        swal("", response.message);
+                    })
             }
             else {
                 swal("", "Por favor preencha todos os campos obrigatórios!");
@@ -277,8 +289,6 @@
             let data = $(this).serializeArray();
             data.push({ name: 'taskId', value: $('#taskId').val() });
             data.push({ name: 'message', value: $('#summer').val() });
-
-            console.log(data)
 
             submitAssync(url, data,
                 function (response) {
